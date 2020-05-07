@@ -1,0 +1,30 @@
+{
+  "id": "1764570",
+  "name": "bbb",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "925318",
+      "name": "手机",
+      "font_class": "shouji",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "3216092",
+      "name": "乘号，错误",
+      "font_class": "icon--",
+      "unicode": "e71c",
+      "unicode_decimal": 59164
+    },
+    {
+      "icon_id": "12752730",
+      "name": "邮箱",
+      "font_class": "youxiang_huaban",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    }
+  ]
+}
