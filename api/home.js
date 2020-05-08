@@ -39,16 +39,25 @@ export function getSristTypeList(data) {
 		method: 'post',
 	},{...data})
 }
+//品牌 查询列表
 export function getselectShopListByShopType(data) {
 	return http.httpTokenRequest({
 		url: 'home/selectShopListByShopType',
 		method: 'post',
 	},{...data})
 }
-
+//搜索 查询列表
 export function getselectShopListBySearch(data) {
 	return http.httpTokenRequest({
 		url: 'home/selectShopListBySearch',
+		method: 'post',
+	},{...data})
+}
+
+//商品详情
+export function selectShopByid(data) {
+	return http.httpTokenRequest({
+		url: 'shop/selectShopByid',
 		method: 'post',
 	},{...data})
 }

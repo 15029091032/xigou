@@ -34,6 +34,7 @@
 
 <script>
 	import pickerAddress from '../../components/pickerAddress/pickerAddress.vue'
+	import { addAddress } from '../../api/user.js';
 	export default {
 		data() {
 			return {
@@ -62,11 +63,14 @@
 		},
 		methods: {
 			switchChange(e){
-				this.addressData.default = e.detail;
+				
+				
+				this.addressData.default = e.detail.value;
 			},
 			//三级联动
 			change(data) {
 			    this.txt = data.data.join('')
+				 this.address=this.txt
 			    console.log(data.data.join(''))
 			},
 			//地图选择地址
@@ -80,31 +84,70 @@
 			// },
 			
 			//提交
-			confirm(){
-				let data = this.addressData;
-				if(!data.name){
+		 async confirm(){
+				let cont = this.addressData;
+				cont.address=this.txt;
+				if(!cont.name){
 					this.$api.msg('请填写收货人姓名');
 					return;
 				}
-				if(!/(^1[3|4|5|7|8][0-9]{9}$)/.test(data.mobile)){
+				if(!/(^1[3|4|5|7|8][0-9]{9}$)/.test(cont.mobile)){
 					this.$api.msg('请输入正确的手机号码');
 					return;
 				}
-				// if(!data.address){
-				// 	this.$api.msg('请在地图选择所在位置');
-				// 	return;
-				// }
-				if(!data.area){
+				if(!cont.address||cont.address=='请选择'){
+					this.$api.msg('请选择所在地区');
+					return;
+				}
+				if(!cont.area){
 					this.$api.msg('请填写门牌号信息');
 					return;
 				}
 				
-				//this.$api.prePage()获取上一页实例，可直接调用上页所有数据和方法，在App.vue定义
-				this.$api.prePage().refreshList(data, this.manageType);
-				this.$api.msg(`地址${this.manageType=='edit' ? '修改': '添加'}成功`);
-				setTimeout(()=>{
-					uni.navigateBack()
-				}, 800)
+				
+				
+				let that=this;
+				
+				
+						let d={
+							'name':cont.name,
+							'phone':cont.mobile,
+							'pro_city_area':cont.address,
+							'address':cont.area,
+							'is_default':cont.default? 1 : 2,
+							'userid':uni.getStorageSync('dataInfo').id,
+						}
+						console.log(d)
+						// return
+						let data = await addAddress(d);
+						
+						
+					    console.log("data:",data)
+						 
+						 
+						 
+						if (data.status == 200) {
+							
+							uni.showToast({
+								title: data.msg,
+								icon: 'none'
+							});
+								//this.$api.prePage()获取上一页实例，可直接调用上页所有数据和方法，在App.vue定义
+							that.$api.prePage().refreshList(cont, that.manageType);
+							that.$api.msg(`地址${that.manageType=='edit' ? '修改': '添加'}成功`);
+							setTimeout(()=>{
+								uni.navigateBack()
+							}, 800)
+						} else {
+							uni.showToast({
+								title: data.msg,
+								icon: 'none'
+							});
+						}
+				
+				
+			
+				
 			},
 		}
 	}

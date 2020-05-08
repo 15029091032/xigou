@@ -110,7 +110,7 @@
 
 			<view class="pro-box">
 				<block v-for="(item, index) in proList" :key="index" v-show="current === 0">
-					<view class="item">
+					<view class="item" @click="navToDetailPage(item)">
 						<image :src="item.shopImg" mode="aspectFit"></image>
 						<view class="info">
 							<view class="name">{{ item.shopName }}</view>
@@ -151,11 +151,7 @@ export default {
 					isSelected: false
 				}
 			],
-			address: {
-				province: '陕西省',
-				city: '西安市',
-				area: '雁塔区'
-			},
+			address: {},
 			current: 0,
 			loadingType: 2, //1个人入口首页  2企业入口首页
 			swiperCurrent: 0,
@@ -177,28 +173,33 @@ export default {
 
 	onLoad() {
 		// this.loadData();
-		// try {
-		// 	let obj = {
-		// 		province: '陕西省',
-		// 		city: '西安市',
-		// 		area: '雁塔区'
-		// 	};
-		// 	uni.setStorageSync('address', obj);
-		// } catch (e) {
-		// 	// error
-		// }
-		// let that = this;
-		// uni.getLocation({
-		// 	type: 'wgs84',
-		// 	success: function(res) {
-		// 		console.log('当前位置的经度：', res);
-		// 		console.log('当前位置的经度：' + res.longitude);
-		// 		console.log('当前位置的纬度：' + res.latitude);
-		// 		that.getLocationAddr(res.longitude, res.latitude);
-		// 	}
-		// });
+		try {
+			let obj = {
+				province: '陕西省',
+				city: '西安市',
+				area: '雁塔区'
+			};
+			uni.setStorageSync('address', obj);
+		} catch (e) {
+			// error
+		}
+		console.log(1)
+		let that = this;
+		uni.getLocation({
+			type: 'wgs84',
+			success: function(res) {
+				
+				console.log('当前位置的经度：', res);
+				console.log('当前位置的经度：' + res.longitude);
+				console.log('当前位置的纬度：' + res.latitude);
+				
+				Promise.all([this.gSelectHome(), this.gSelect()]);
+				//that.getLocationAddr(res.longitude, res.latitude);
+			}
+		});
 	},
 	onShow() {
+		console.log(2)
 		let add = uni.getStorageSync('address');
 		if (add) {
 			this.address = add;
@@ -281,6 +282,8 @@ export default {
 		},
 		//详情页
 		navToDetailPage(item) {
+			
+			
 			let id = item.id;
 		
 			uni.navigateTo({

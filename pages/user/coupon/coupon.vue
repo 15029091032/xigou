@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<view class="p-p" @click="selete()">
+		<!-- <view class="p-p" @click="selete()">
 			<image src="../../../static/youhui/1.png" class="yhimg"></image>
 			<view class="yhgz">
 				<view class="yh-t">
@@ -10,7 +10,7 @@
 				<view class="yh-b">满300元可用</view>
 				<view class="yh-f">2020年1月21日-2020年3月21日</view>
 			</view>
-		</view>
+		</view> -->
 		<!-- <view class="p-p">
 			<image src="../../../static/youhui/2.png" class="yhimg"></image>
 			<view class="yhgz">
@@ -22,15 +22,21 @@
 				<view class="yh-f">2020年1月21日-2020年3月21日</view>
 			</view>
 		</view> -->
+		<view  :style="noStatus" class="noOrder" ><image src="../../../static/temp/wu1.png" mode=""></image></view>
 	</view>
 </template>
 
 <script>
+	
+	import { selectConpostByUserid } from '../../../api/user.js';	
 	export default {
 		data() {
 			return {
-				
+				couponList:{},
 			}
+		},
+		onLoad(){
+			this.couponInfo();
 		},
 		methods: {
 			selete() {
@@ -41,6 +47,30 @@
 					
 				// })
 			},
+			async couponInfo(){
+				let that=this;
+				let d={
+					'userid':uni.getStorageSync('dataInfo').id,
+					'page':1,
+					'rows':10,
+				}
+				let data = await selectConpostByUserid(d);
+				 
+				 
+				if (data.status == 200) {
+					
+					that.couponList=data.data;
+					if(that.couponList.length<=0){
+						this.noStatus='display:block';
+					}
+				} else {
+					uni.showToast({
+						title: data.msg,
+						icon: 'none'
+					});
+				}
+				
+			}
 		}
 	}
 </script>
@@ -80,4 +110,6 @@
 			}
 		}
 	}
+	.noOrder{width: 100%;text-align: center;margin-top: 20%;}
+	.noOrder>image{width: 70%;}
 </style>

@@ -20,3 +20,28 @@ export function timeCode_b(that) {
 }
 
 
+
+/**
+ * 1 app/home/ 搜索  
+ * 2 app/home/selectShopListByShopType 分类下的商品列表
+ * 3 app/home/selectNewShopList 首页  最新商品/附近商品
+ * 4 app/home/selectHome 首页 
+ * 5 app/login/sendSms 发送验证码
+ * 6 app/user/selectConpostByUserid 优惠券列表
+ * 7 address/deleteAddress 删除用户地址
+ * 8 address/updateAddress 编辑用户地址
+ * 9 address/addAddress 添加地址
+ * 10 app/address/selectAddressByUserid 我的地址列表
+ * 11 login/register 注册
+ * 12 app/login/login 登录
+ * 13 selectConlectShopsByUserid 我的收藏
+ * 14 shop/sureConlectShopsByUserid 取消收藏
+ * 15 app/shop/selectShopByid 商品详情
+ * 16 addOrderShop  加入购物车
+ * 17
+ * 18
+ * 19
+ * 20
+ * 
+ * 
+ * */

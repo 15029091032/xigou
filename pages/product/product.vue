@@ -3,8 +3,8 @@
 		<image src="../../static/select.png" class="fenxiang" @click="share"></image>
 		<view class="carousel">
 			<swiper indicator-dots circular="true" duration="400">
-				<swiper-item class="swiper-item" v-for="(item, index) in imgList" :key="index">
-					<view class="image-wrapper"><image :src="item.shopImg" class="loaded" mode="aspectFill"></image></view>
+				<swiper-item class="swiper-item" v-for="(item, index) in imgUrls" :key="index">
+					<view class="image-wrapper"><image :src="item" class="loaded" mode="aspectFill"></image></view>
 				</swiper-item>
 			</swiper>
 		</view>
@@ -31,7 +31,7 @@
 			</view>
 		</view>
 		<!-- 评价 -->
-		<view class="eva-section">
+		<!-- <view class="eva-section">
 			<view class="e-header">
 				<text class="tit">评价</text>
 				<text>(86)</text>
@@ -49,11 +49,14 @@
 					</view>
 				</view>
 			</view>
-		</view>
+		</view> -->
 
 		<view class="detail-desc">
 			<view class="d-header"><text>商品详情</text></view>
-			<rich-text :nodes="desc"></rich-text>
+			<view class="c-content">
+				<view  v-for="(item, index) in desc" :key="index" ><image class="c_img" :src="item" ></image></view>
+			</view>
+			<!-- <rich-text :nodes="desc"></rich-text> -->
 		</view>
 
 		<!-- 底部操作菜单 -->
@@ -67,7 +70,7 @@
 				<text>客服</text>
 			</navigator>
 			<view class="p-b-btn" :class="{ active: favorite }" @click="toFavorite">
-				<text class="yticon icon-shoucang"></text>
+				<text class="yticon icon-shoucang " ></text>
 				<text>收藏</text>
 			</view>
 
@@ -84,22 +87,24 @@
 			<view class="layer attr-content" @click.stop="stopPrevent">
 				<view class="a-t">
 					<!-- <image src="https://gd3.alicdn.com/imgextra/i3/0/O1CN01IiyFQI1UGShoFKt1O_!!0-item_pic.jpg_400x400.jpg"></image> -->
-					<view class="right"><text class="price">¥328.00</text></view>
+					<view class="right"><text class="price" >¥{{skuPrice}}</text></view>
 				</view>
 				<text class="r-g">规格</text>
 				<view class="r-h">
-					<view class="r-ht"><text>12</text></view>
-					<view class="r-hf"><text>100g</text></view>
+				<!-- 	<view class="r-hf"><text>{{editItem.secondeTypeId}}</text></view>
+					<view class="r-ht"><text>{{editItem.secondeTypeId}}</text></view> -->
+					<view  v-for="(item,index) in dataDetail.skuList" :key="index" :name="item.id"  @click="choiceSku(item.id,item.skuPrice)"  :class="index==0?'r-hf status_but':'r-ht status_but'"   ><text>{{item.skuName}}</text></view>
+
 				</view>
 				
-				<view class="item-right">
+				<view  class="item-right">
 					
 					<text class="r-tl">数量</text>
 					<uni-number-box
-					class="r-tr"
-						:min="1"
-						:max="9"	
-					></uni-number-box>
+										class="r-tr"
+											:min="1"
+											:max="9"	
+										></uni-number-box>
 				</view>
 				<!-- <view v-for="(item,index) in specList" :key="index" class="attr-list">
 					<text>规格</text>
@@ -127,7 +132,10 @@
 <script>
 import uniNumberBox from "@/components/uni-number-box.vue"
 import share from '@/components/share';
-import { sureConlectShopsByUserid } from '../../api/cart.js';
+import { sureConlectShopsByUserid,addOrderShop } from '../../api/cart.js';
+import { selectShopByid } from '../../api/home.js';
+
+
 export default {
 	components: {
 		share,
@@ -136,33 +144,55 @@ export default {
 	data() {
 		return {
 			editItem: {}, // 接受上个页面传递过来的数据
+			dataDetail:{},
 			specClass: 'none',
 			specSelected: [],
-			
+			skuid:-1,
+			skuPrice:-1,
 			favorite: false,
 			shareList: [],
-			
-			imgList:[],
+			number:1,
+			imgUrls:[],
 			desc:[],
 			type:0,
+			skuList:[],
+			price:0
+			
 		};
 	},
 	async onLoad(option) {
-		console.log(option)
+	
+		
 		this.editItem = JSON.parse(option.editItem);
+		
 		console.log("editItem",this.editItem);
-		return
-		//规格 默认选中第一条
-		this.specList.forEach(item => {
-			for (let cItem of this.specChildList) {
-				if (cItem.pid === item.id) {
-					this.$set(cItem, 'selected', true);
-					this.specSelected.push(cItem);
-					break; //forEach不能使用break
-				}
-			}
-		});
+		
+		 
+		const data = await selectShopByid({shopid:this.editItem.id,userid:uni.getStorageSync('dataInfo').id});
+		
+		
+		 // this.price=data.data.sellPrice;
+		 // this.skuList=data.data.skuList
+		 // this.name=data.data.shopName
+		 this.dataDetail=data.data;
+		if(data.data.is_conlect==1){
+			this.favorite=true;
+		}
+		this.imgUrls=this.dataDetail.imgUrls.split(',');
+		this.desc=this.dataDetail.detilas.split(',');	
+		this.skuid=this.dataDetail.skuList[0].id;
+		this.skuPrice=this.dataDetail.skuList[0].skuPrice;
+		// 	for (let cItem of this.specChildList) {
+		// 		if (cItem.pid === item.id) {
+		// 			this.$set(cItem, 'selected', true);
+		// 			this.specSelected.push(cItem);
+		// 			break; //forEach不能使用break
+		// 		}
+		// 	}
+		// });
 		this.shareList = await this.$api.json('shareList');
+		
+	
 	},
 	// async onLoad(options){
 	// 	//接收传值,id里面放的是标题，因为测试数据并没写id
@@ -184,6 +214,7 @@ export default {
 	// 	this.shareList = await this.$api.json('shareList');
 	// },
 	methods: {
+	
 		//规格弹窗开关
 		toggleSpec(type) {
 			let that=this;
@@ -194,18 +225,24 @@ export default {
 				}, 250);
 			} else if (that.specClass === 'none') {
 				that.specClass = 'show';
+				that.skuPrice=that.dataDetail.skuList[0].skuPrice;
 			}
 			if(type==4) return
 			
 			if(type==5){
 				if(that.type==1){
 					
-					console.log('规格')
+					console.log('规格',that.number)
 				}else if(that.type==2){
-					console.log('加入购物车')
+					this.addshopCar()
+				
 				}else if(that.type==3){
-					buy()
-					// console.log('立即购买')
+				
+	
+						uni.navigateTo({
+							url: `../cart/confrims/confrims?type=1&number=${that.number}&price=${that.dataDetail.sellPrice}&skuList=${JSON.stringify(this.dataDetail.skuList)}&name=${this.dataDetail.shopName}`
+						});
+				
 				}
 			}else{
 				that.type=type;
@@ -250,6 +287,25 @@ export default {
 		share() {
 			this.$refs.share.toggleMask();
 		},
+		async addshopCar(){
+			let that=this;
+			let d={
+				'userid':uni.getStorageSync('dataInfo').id,			
+				'shopid':that.dataDetail.shopid,
+				'skuid':that.skuid,
+				'shop_price':that.skuPrice,
+				'num':that.number,
+				'type':uni.getStorageSync('loadingType'),
+			}
+			
+			let data = await addOrderShop(d);
+			
+			
+			uni.showToast({
+				title: data.msg,
+				icon: 'none'
+			});
+		},
 		//收藏
 		async toFavorite() {
 			let that=this;
@@ -276,6 +332,17 @@ export default {
 				});
 			}
 			
+		},
+		choiceSku(id,price){
+			this.skuid=id;
+			this.skuPrice=price;
+			
+		var skuArry=document.getElementsByClassName("status_but")
+		for(let i=0;i<skuArry.length;i++){
+			skuArry[i].className=" status_but r-ht"
+		}
+			
+		document.getElementsByName(id)[0].className=" status_but r-hf"
 		},
 		buy() {
 			this.toggleSpec()
@@ -315,13 +382,14 @@ page {
 	color: #666;
 	border-radius: 6upx;
 	.r-ht {
-		width: 83upx;
+		width: 113upx;
 		height: 50upx;
 		font-size: 24upx;
 		padding-top: 6upx;
 		background-color: #f6f6f6;
 		border: 2upx solid #f6f6f6;
 		text-align: center;
+		margin-left: 10px;
 	}
 	.r-hf {
 		width: 113upx;
@@ -830,5 +898,9 @@ page {
 			background: transparent;
 		}
 	}
+}
+.c_img{
+	width: 100%;
+	
 }
 </style>

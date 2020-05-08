@@ -17,11 +17,7 @@
 		data() {
 			return {
 				searchValue:'',
-				address: {
-					province: '陕西省',
-					city: '西安市',
-					area: '雁塔区'
-				},
+				address: {},
 				rows:10,
 				page:1,
 				loadingType: 2, //1个人入口首页  2企业入口首页
@@ -35,34 +31,40 @@
 		},
 		methods: {
 			async search() {
-				let that=this;
+				uni.navigateTo({
+					url: `/pages/product/lists/lists?id=1&search=${this.searchValue}`
+				})
+				// uni.navigateTo({
+				// 	url: `/pages/product/lists/lists?fid=${this.currentId}&sid=${sid}&tid=${tid}`
+				// })
+	// 			let that=this;
 				
 			
 				
-				let d = {
-					rows  : that.rows,
-					page  : that.page,
-					type: that.loadingType, //1企业入口  2个人入口
-					province: that.address.province,
-					city: that.address.city,
-					area: that.address.area,
-					search:that.searchValue,
-				};
+	// 			let d = {
+	// 				rows  : that.rows,
+	// 				page  : that.page,
+	// 				type: that.loadingType, //1企业入口  2个人入口
+	// 				province: that.address.province,
+	// 				city: that.address.city,
+	// 				area: that.address.area,
+	// 				search:that.searchValue,
+	// 			};
 	
-				let data = await getselectShopListBySearch(d);
-				console.log(data)
-				if (data.status == 200) {
-					uni.showToast({
-						title: data.msg,
-						icon: 'none'
-					});
+	// 			let data = await getselectShopListBySearch(d);
+	// 			console.log(data)
+	// 			if (data.status == 200) {
+	// 				uni.showToast({
+	// 					title: data.msg,
+	// 					icon: 'none'
+	// 				});
 					
-				} else {
-					uni.showToast({
-						title: data.msg,
-						icon: 'none'
-					});
-				}
+	// 			} else {
+	// 				uni.showToast({
+	// 					title: data.msg,
+	// 					icon: 'none'
+	// 				});
+	// 			}
 					 
 				
 			},

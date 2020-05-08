@@ -16,14 +16,14 @@ const httpRequest = (opts, data) => {
 		data: data,
 		method: opts.method,
 		header: opts.method == 'get' ? {
-			'token': token,
+			'Authorization': token,
 			"Accept": "application/json",
 			"Content-Type": "application/json; charset=UTF-8"
 		} : {
-			'token': token,
+			'Authorization': token,
 			'X-Requested-With': 'XMLHttpRequest',
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-			// 'Content-Type': 'application/json; charset=UTF-8'
+			//'Content-Type': 'application/json; charset=UTF-8'
 		},
 		dataType: 'json',
 	}
@@ -38,7 +38,8 @@ const httpRequest = (opts, data) => {
 				if (res[1]) {
 					if (res[1].statusCode == "200") {
 						if(httpDefaultOpts.url == `${baseUrl}${LoginUrl}`){
-							console.log(res,'res')
+							console.log(res,'res123232')
+						
 							uni.setStorage({
 								key:'token',
 								data:res[1].header.token,
@@ -88,14 +89,14 @@ const httpTokenRequest = (opts, data) => {
 		data: data,
 		method: opts.method,
 		header: opts.method == 'get' ? {
-			'token': token,
+			'Authorization': token,
 			'X-Requested-With': 'XMLHttpRequest',
 			"Accept": "application/json",
 			"Content-Type": "application/json; charset=UTF-8"
 		} : {
-			'token': token,
+			'Authorization': token,
 			'X-Requested-With': 'XMLHttpRequest',
-			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+			 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 			// "Content-Type": "application/json; charset=UTF-8"
 		},
 		dataType: 'json',

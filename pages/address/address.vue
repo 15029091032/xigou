@@ -33,38 +33,41 @@
 			return {
 				remom :1,
 				source: 0,
-				addressList: []
+				addressList: [],
+				
 			}
 		},
-		async onLoad(option){
-			
-			console.log(option.type);
-			this.type = option.type;
-			let that=this;
-					let d={
-						'userid':uni.getStorageSync('dataInfo').id,
-						'page':1,
-						'rows':20,
-					}
-					let data = await selectAddressByUserid(d);
-					
-					
-					 console.log("data:",data)
-					 
-					 
-					 
-					if (data.status == 200) {
-						
-						that.addressList=data.data;
-						
-					} else {
-						uni.showToast({
-							title: data.msg,
-							icon: 'none'
-						});
-					}
+		 onLoad(option){
+				
+			this.option=option;
+			this.selectAddress()
 		},
 		methods: {
+			async selectAddress(){
+					
+				this.type = this.option.type;
+				let that=this;
+						let d={
+							'userid':uni.getStorageSync('dataInfo').id,
+							'page':1,
+							'rows':20,
+						}
+						let data = await selectAddressByUserid(d);
+						
+						 
+						 
+						 
+						if (data.status == 200) {
+							
+							that.addressList=data.data;
+							
+						} else {
+							uni.showToast({
+								title: data.msg,
+								icon: 'none'
+							});
+						}
+			},
 			//选择地址
 			checkAddress(item){
 				if(this.source == 1){
@@ -78,7 +81,7 @@
 				//1代表订单点击过来的
 				//二表示地址我的地址点击过来的
 				if(this.type==1){
-						console.log(item)
+						
 						let that=this;
 								let d={
 									'name':item.name,
@@ -87,13 +90,10 @@
 									'address':item.address,
 									'is_default':1,
 									'id':item.id,
+									'userid':uni.getStorageSync('dataInfo').id,
 								}
 								let data = await updateAddress(d);
 								
-								
-								//  console.log("data:",data)
-								 
-								 
 								 
 								if (data.status == 200) {
 									
@@ -101,7 +101,10 @@
 										title: data.msg,
 										icon: 'none'
 									});
-									
+									that.$api.prePage().address();
+									setTimeout(()=>{
+										uni.navigateBack()
+									}, 800)
 								} else {
 									uni.showToast({
 										title: data.msg,
@@ -109,6 +112,7 @@
 									});
 								}
 				}else if(this.type==2){
+					
 					uni.navigateTo({
 						url: `./adressSupervise/adressSupervise?data=${JSON.stringify(item)}`
 					})
@@ -123,9 +127,11 @@
 			//添加或修改成功之后回调
 			refreshList(data, type){
 				//添加或修改后事件，这里直接在最前面添加了一条数据，实际应用中直接刷新地址列表即可
-				this.addressList.unshift(data);
+				this.selectAddress()
+				//console.log(data)
+				//this.addressList.unshift(data);
 				
-				console.log(data, type);
+				//console.log(data, type);
 			}
 		}
 	}
@@ -140,6 +146,7 @@
 		min-height: 100%;
 		padding-top: 10upx;
 		background-color: #f6f6f6;
+		padding-bottom: 150upx;
 	}
 	.a-m {
 		width: 32upx;

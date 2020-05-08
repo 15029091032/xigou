@@ -19,7 +19,7 @@
 		<view class="btns">
 			
 			<button class="b-t" @click="goregister()">注册</button>
-			<button class="b-f" @click="goInto()">登录</button>
+			<!-- <button class="b-f" @click="goInto()">登录</button> -->
 		</view> 
 	</view>
 </template>

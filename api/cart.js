@@ -43,4 +43,14 @@ export function selectOrderShopsByUserid(data) {
   	},{...data})
   }
   
- 
+ /**
+  * 	加入购物车
+  * 
+  * */
+  export function addOrderShop(data) {
+  	return http.httpTokenRequest({
+  		url: 'shop/addOrderShop',
+  		method: 'post',
+  	},{...data})
+  }
+  

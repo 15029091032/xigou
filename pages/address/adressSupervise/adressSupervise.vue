@@ -6,19 +6,19 @@
 		</view>
 		<view class="row b-b">
 			<!-- <text class="tit">手机号</text> -->
-			<input class="input" type="number" v-model="addressData.mobile"/>
+			<input class="input" type="number" v-model="addressData.phone"/>
 		</view>
 		<view class="row b-b zdy">
-			<pickerAddress @change="change" class="input">{{addressData.addressName}}</pickerAddress>
+			<pickerAddress @change="change" class="input">{{addressData.proCityArea}}</pickerAddress>
 		</view>
 		<view class="row b-b"> 
 			<!-- <text class="tit">详细地址</text> -->
-			<input class="input" type="text" v-model="addressData.area"/>
+			<input class="input" type="text" v-model="addressData.address"/>
 		</view>
 		
 		<view class="row default-row">
 			<text class="tit">默认地址</text>
-			<switch :checked="addressData.defaule" color="#00ff33" @change="switchChange" />
+			<switch :checked="isdefault" color="#00ff33" @change="switchChange" />
 		</view>
 		<view class="row default-row">
 			<text class="del" type="primary" @click="togglePopup('center', 'tip')">删除收货地址</text>
@@ -26,11 +26,11 @@
 		<!-- 弹窗 -->
 		<uni-popup ref="showtip" :type="type" :mask-click="false" @change="change">
 			<view class="uni-tip">
-				<text class="uni-tip-title">警告</text>
-				<text class="uni-tip-content">这是一个通过自定义 popup，自由扩展的 警告弹窗。点击遮罩不会关闭弹窗。</text>
+				<text class="uni-tip-title">友情提示</text>
+				<text class="uni-tip-content">确定要删除次地址吗？</text>
 				<view class="uni-tip-group-button">
-					<text class="uni-tip-button" @click="cancel('tip')">取消</text>
-					<text class="uni-tip-button" @click="cancel('tip')">确定</text>
+					<text class="uni-tip-button" @click="cancel('cancel')">再想想</text>
+					<text class="uni-tip-button" @click="cancel('remove')">确定</text>
 				</view>
 			</view>
 		</uni-popup>
@@ -40,19 +40,61 @@
 <script>
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import uniSegmentedControl from '@/components/uni-segmented-control/uni-segmented-control.vue';
+	import {updateAddress,deleteAddress} from '../../../api/user.js';
+
 	export default {
 		data() {
 			return {
 				type: '',
 				addressData: {},
+				isdefault:false
 			}
 		},
 		onLoad(option){
+		
 			this.addressData = JSON.parse(option.data)
+			
+			this.isdefault=this.addressData.isDefault==1? true : false
+			
+				
+		},
+		onNavigationBarButtonTap:async  function(e) {
+			let that=this;
+		 this.addressData.isDefault=this.isdefault?1 :2;
+		 
+		 console.log(this.addressData);
+					
+					let d={
+						'name':this.addressData.name,
+						'phone':this.addressData.phone,
+						'pro_city_area':this.addressData.proCityArea,
+						'address':this.addressData.address,
+						'is_default':this.addressData.isDefault,
+						'id':this.addressData.id
+					}
+					let data = await updateAddress(d);
+					
+					 
+					if (data.status == 200) {
+						
+						uni.showToast({
+							title: data.msg,
+							icon: 'none'
+						});
+						that.$api.prePage().selectAddress();
+						setTimeout(()=>{
+							uni.navigateBack()
+						}, 800)
+					} else {
+						uni.showToast({
+							title: data.msg,
+							icon: 'none'
+						});
+					}
 		},
 		methods: {
 			switchChange(e){
-				this.addressData.default = e.detail;
+				this.isdefault = e.detail.value;
 			},
 			togglePopup(type, open) {
 				switch (type) {
@@ -72,11 +114,46 @@
 					this.$refs['show' + open].open()
 				})
 			},
-			cancel(type) {
-				this.$refs['show' + type].close()
+		async	cancel(type) {
+			let that=this;
+				if(type=="remove"){
+					console.log(that.addressData.id)
+					
+				
+					
+					let data = await deleteAddress({id:that.addressData.id});
+					
+					 
+					if (data.status == 200) {
+						
+						uni.showToast({
+							title: data.msg,
+							icon: 'none'
+						});
+						that.$api.prePage().selectAddress();
+						setTimeout(()=>{
+							uni.navigateBack()
+						}, 800)
+					} else {
+						uni.showToast({
+							title: data.msg,
+							icon: 'none'
+						});
+					}
+					
+				}
+				that.$refs['showtip' ].close()
+				
 			},
 			change(e) {
-				console.log('是否打开:' + e.show)
+				if(e.data==undefined){
+					return
+				}
+				let area='';
+				for(let i=0;i<e.data.length;i++){
+					area+=e.data[i];
+				}
+				this.addressData.proCityArea=area;
 			},
 		}
 	}

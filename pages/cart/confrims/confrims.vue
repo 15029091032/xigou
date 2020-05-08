@@ -20,19 +20,19 @@
 		<view class="collection">
 			<image class="colle-left" src="../../../static/xiangji.png"></image>
 			<view class="colle-right">
-				<view class="crh">博纳天纯由猫粮博纳天纯由猫粮</view>
-				<view class="crb">规格：&nbsp350g</view>
+				<view class="crh">{{shopInfo.name}}</view>
+				<view class="crb">规格：&nbsp{{JSON.parse(shopInfo.skuList)[0].skuName}}g</view>
 				<view class="crf">
 					<view class="crf-l">
-						<text class="c-v">✖️2</text>
-						<text class="prc">￥9.9</text>
+						<text class="c-v">✖️{{shopInfo.number}}</text>
+						<text class="prc">￥{{shopInfo.price}}</text>
 					</view>
 				</view>
 			</view>
 		</view>
 		<view class="colle-rt">
 			<text>应付金额</text>
-			<text>¥96.60</text>
+			<text>¥{{shopInfo.countPrice}}</text>
 		</view>
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50" @click="goYh()">
 			<text class="cell-tit">优惠卷</text>
@@ -81,47 +81,55 @@ export default {
 			value:'r1',
 			
 			addressList:[],
+			option:{},
+			shopInfo:{},
 		};
 	},
-	async onLoad(){
+	async onLoad(option){
 	  let that=this;
-		let d={
-			'userid':uni.getStorageSync('dataInfo').id,
-			'page':1,
-			'rows':20,
-		}
-		let data = await selectAddressByUserid(d);
-		
-		
-		 console.log("data:",data)
-		 
-		 
-		 
-		if (data.status == 200) {
-			
-			that.addressList=data.data;
-			
-		} else {
-			uni.showToast({
-				title: data.msg,
-				icon: 'none'
-			});
-		}
+	
+	  that.shopInfo=option;
+	  that.shopInfo.countPrice=(parseInt(that.shopInfo.price)*parseInt(that.shopInfo.number)).toFixed(2)
+	  
+		Promise.all([this.address()]);
 	},
+	
 	methods: {
+		async address(){
+			  let that=this;
+			let d={
+				'userid':uni.getStorageSync('dataInfo').id,
+				'page':1,
+				'rows':100,
+			}
+			let data = await selectAddressByUserid(d);
+			 
+			 
+			if (data.status == 200) {
+				
+				that.addressList=data.data;
+				
+			} else {
+				uni.showToast({
+					title: data.msg,
+					icon: 'none'
+				});
+			}
+		},
+	
 		// radioChange(val){
 		// 	console.log(val)
 		// },
-		// goYh() {
-		// 	uni.navigateTo({
-		// 		url:'../../user/coupon/coupon'
-		// 	})
-		// },
-		// goPay() {
-		// 	uni.navigateTo({
-		// 		url: '../../money/pay'
-		// 	})
-		// },
+		goYh() {
+			uni.navigateTo({
+				url:'../../user/coupon/coupon'
+			})
+		},
+		goPay() {
+			uni.navigateTo({
+				url: '../../money/pay'
+			})
+		},
 		goAddress() {
 				
 			uni.navigateTo({
@@ -207,6 +215,8 @@ page {
 		margin: 40upx 0upx;
 	}
 	.colle-right {
+		width: 62%;
+		
 		margin: 30upx 15upx 88upx 15upx;
 		display: flex;
 		justify-content: space-between;

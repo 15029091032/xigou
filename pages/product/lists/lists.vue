@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="pro-box">
-			<view class="item" v-for="(item, index) in proList" :key="index">
+			<view class="item" v-for="(item, index) in proList" :key="index" @click="navToDetailPage(item)">
 				<image :src="item.shopImg"></image>
 				<view class="info">
 					<view class="name">{{ item.shopName }}</view>
@@ -17,42 +17,101 @@
 				</view>
 			</view>
 		</view>
+		<view  :style="noStatus" class="noOrder" ><image src="../../../static/temp/wu1.png" mode=""></image></view>
 	</view>
 </template>
 
 <script>
-import { getselectShopListByShopType } from '../../../api/home.js';
+import { getselectShopListByShopType,getselectShopListBySearch } from '../../../api/home.js';
 export default {
 	data() {
 		return {
 			proList: [],
-			loadingType:[]
+			loadingType:[],
+			noStatus:'display:none',
 		};
 	},
-	onLoad(e) {
+	onLoad(options) {
 		try {
 			const res = uni.getStorageSync('loadingType');
-			console.log("res========",res);
+			// console.log("res========",res);
 			this.loadingType = res
 		} catch (e) {
 			// error
 		}
-		this.gListByShopType('陕西省', '西安市', '雁塔区', this.loadingType, '1', '10', '11');
+		//{province: "陕西省", city: "西安市", area: "雁塔区"}
+		
+			//id值为1表示从搜索过来的
+			if(options.id==1){
+				
+				this.gListBySearch( this.loadingType, '1', '10', options.search);
+			}else{
+		
+				this.gListByShopType( this.loadingType, '1', '10', options.tid);
+			}
+		
+		
 	},
 	methods: {
-		async gListByShopType(province, city, area, type, page, rows, typeid) {
-			const data = await getselectShopListByShopType({
-				province: province, //省
-				city: city, //市
-				area: area, //区
+		async gListBySearch( type, page, rows, search) {
+			const data = await getselectShopListBySearch({
+				province: uni.getStorageSync('address').province, //省
+				city: uni.getStorageSync('address').city, //市
+				area: uni.getStorageSync('address').area, //区
 				type: type, //1个人入口首页  2企业入口首页
 				page: page, // 1开始
 				rows: rows, // 条数
-				typeid: typeid // 分类id
+				search: search // 分类id
+			});
+			
+			
+			if (data.status == 200) {
+				this.proList = data.data;
+				if(this.proList.length==0){
+					this.noStatus='display:block';
+				}
+			} else {
+				this.proList =[];
+				uni.showToast({
+					title: data.msg,
+					icon: 'none'
+				});
+			}
+		},
+		async gListByShopType( type, page, rows, typeid) {
+			const data = await getselectShopListByShopType({
+				province: uni.getStorageSync('address').province, //省
+				city: uni.getStorageSync('address').city, //市
+				area: uni.getStorageSync('address').area, //区
+				type: type, //1个人入口首页  2企业入口首页
+				page: page, // 1开始
+				rows: rows, // 条数
+				typeid : typeid // 分类id
 			});
 			this.proList = data.data;
-			console.log(this.proList);
-		}
+			if (data.status == 200) {
+				this.proList = data.data;
+				if(this.proList.length==0){
+					this.noStatus='display:block';
+				}
+			} else {
+				this.proList =[];
+				uni.showToast({
+					title: data.msg,
+					icon: 'none'
+				});
+			}
+		},
+		//详情页
+		navToDetailPage(item) {
+			
+			
+			let id = item.id;
+		
+			uni.navigateTo({
+				url: `/pages/product/product?id=${id}&editItem=${JSON.stringify(item)}`
+			});
+		},
 	}
 };
 </script>
@@ -67,6 +126,8 @@ page {
 	background-color: #f6f6f6;
 	padding: 20upx;
 }
+.noOrder{width: 100%;text-align: center;margin-top: 20%;}
+.noOrder>image{width: 70%;}
 .pro-box {
 	display: flex;
 	justify-content: space-between;

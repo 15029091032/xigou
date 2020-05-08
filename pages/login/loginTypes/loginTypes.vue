@@ -130,7 +130,7 @@ export default {
 					key:'token',
 					data: data.data.token,
 					success() {
-						// console.log('存储成功')
+						
 					}
 				})
 				uni.switchTab({

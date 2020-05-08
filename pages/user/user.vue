@@ -237,7 +237,7 @@
 			},
 			goAddress() {
 				uni.navigateTo({
-					url:'../address/address'
+					url:'../address/address?type=2'
 				})
 			},
 			goMyCollection() {

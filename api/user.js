@@ -82,5 +82,49 @@ export function updateAddress(data) {
 	},{...data})
 }
 
+/**
+ * @param {data} 删除用户地址
+ */
+export function deleteAddress(data) {
+	return http.httpTokenRequest({
+		url: 'address/deleteAddress',
+		method: 'post',
+	},{...data})
+}
 
 
+
+
+/**
+ * @param {data} 我的收藏
+ */
+export function selectConlectShopsByUserid(data) {
+	return http.httpTokenRequest({
+		url: 'shop/selectConlectShopsByUserid',
+		method: 'post',
+	},{...data})
+}
+
+
+
+
+
+/**
+ * @param {data} 添加用户地址
+ */
+export function addAddress(data) {
+	return http.httpTokenRequest({
+		url: 'address/addAddress',
+		method: 'post',
+	},{...data})
+}
+
+/**
+ * @param {data} 优惠券列表
+ */
+export function selectConpostByUserid(data) {
+	return http.httpTokenRequest({
+		url: 'user/selectConpostByUserid',
+		method: 'post',
+	},{...data})
+}
