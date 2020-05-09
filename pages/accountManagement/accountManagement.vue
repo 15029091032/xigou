@@ -2,37 +2,62 @@
 	<view class="container">
 		<view class="list-cell b-b m-t" @click="change()" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">更换手机</text>
-			<text class="cell-tits">18360570821</text>
+			<text class="cell-tits">{{userDetail.userphone}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
 		<view class="list-cell b-b" @click="navTo('zhifubao')" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">支付宝绑定</text>
-			<text class="cell-tits">未绑定</text>
+			<text class="cell-tits" >{{(userDetail.alipayno==''||userDetail.alipayName=='')?'未绑定':'已绑定'}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
 		<view class="list-cell" @click="navTo('weixin')" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">微信绑定</text>
-			<text class="cell-tits">未绑定</text>
+			<text class="cell-tits">{{(userDetail.wechatno==''||userDetail.wechatName=='')?'未绑定':'已绑定'}}</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
 	</view>
 </template>
 
 <script>
+	
+	import { selectAppUserByUserid } from '../../api/user.js';
 export default {
 	data() {
-		return {};
+		return {
+			userDetail:{},
+		};
+	},
+	onLoad(){
+			this.getUserInfo()
 	},
 	methods: {
+		async getUserInfo(){
+			let that=this;
+			 
+			let data= await selectAppUserByUserid({userid:uni.getStorageSync('dataInfo').id})
+			
+		
+			if (data.status == 200) {
+				that.userDetail=data.data;
+			} else {
+				uni.showToast({
+					title: data.msg,
+					icon: 'none'
+				});
+			}
+			
+			
+		},
 		change() {
 			uni.navigateTo({
 				url: './changPhone/changPhone'
 			});
 		},
 		navTo(type) {
+			let that=this;
 			// console.log(e)
 			uni.navigateTo({
-				url: `bindAccount/bindAccount?loginType=${type}`
+				url: `bindAccount/bindAccount?loginType=${type}&wechatno=${that.userDetail.wechatno}&wechatName=${that.userDetail.wechatName}&alipayno=${that.userDetail.alipayno}&alipayName=${that.userDetail.alipayName}`
 			})
 		}
 	}

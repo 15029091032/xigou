@@ -2,7 +2,7 @@
 	<view class="container">
 		<view class="num-wrapper">
 			<view class="left">
-				<view class="num">3221.13</view>
+				<view class="num">{{money}}</view>
 				<view class="txt">账户余额</view>
 			</view>
 			<view class="right" @click="GoDrawDetail()">
@@ -13,7 +13,8 @@
 			</view>
 		</view>
 		<view class="h-d">
-			<text class="num">￥300</text>
+			
+			<input class="uni-input " v-model="price" type="number" focus placeholder="请输入提现金额" />
 		</view>
 		<view class="draw">
 			<view class="list-cell">
@@ -24,32 +25,134 @@
 					<image src="../../../static/temp/share_wechat.png" mode="" class="zf"></image>
 					<text class="zfs">微信支付</text>
 				</view>
-				<image src="../../../static/icon-007.png" class="xz"></image>
+				<image :src="redioArry[0].src" @click="redioWay(0)" class="xz"></image>
 			</view>
 			<view class="list-cells">
 				<view class="cell-img">
-					<image src="../../../static/temp/share_wechat.png" mode="" class="zf"></image>
+					<image src="../../../static/temp/WechatIMG1.png" mode="" class="zf"></image>
 					<text class="zfs">支付宝支付</text>
 				</view>
-				<image src="../../../static/icon-006.png" class="xz"></image>
+				<image :src="redioArry[1].src"  @click="redioWay(1)" class="xz"></image>
 			</view>
 		<view class="log-out-btn">
-			 <button type="primary" class="cell-tits">确认提现</button>
+			 <button type="primary" class="cell-tits" @click="but()">确认提现</button>
 		</view> 
 	</view>
  </view>	
 </template>
 
 <script>
+	import { selectAppUserByUserid } from '../../../api/user.js';
+	import { detSql,empty_b } from '../../../public/base.js';
 export default {
 	data() {
-		return {};
+		return {
+			price:0,
+			money:0,
+			redioArry:[{src:'../../../static/icon-007.png',},{src:'../../../static/icon-006.png',}],
+			redioStatus:1,
+			userDetail:{},
+		};
+	},
+	onLoad(option){
+		this.money=option.money;
 	},
 	methods: {
 		GoDrawDetail() {
+			
+			
 			uni.navigateTo({
-				url:'../drawDetail/drawDetail'
+				url:`../drawDetail/drawDetail?money=${this.money}`,
 			})
+		},
+		redioWay(count){
+			let that=this;
+			if(count==0){
+				that.redioStatus=1;
+				that.redioArry[0].src='../../../static/icon-007.png'
+				
+				that.redioArry[1].src='../../../static/icon-006.png'
+				
+			}else if(count==1){
+				that.redioStatus=2;
+				that.redioArry[0].src='../../../static/icon-006.png'
+			
+				that.redioArry[1].src='../../../static/icon-007.png'
+				
+			}
+		
+		},
+	  async but(){
+			
+			
+			let that=this;
+			
+			
+			 
+			let data= await selectAppUserByUserid({userid:uni.getStorageSync('dataInfo').id})
+			
+			console.log("userInfo",data)
+			if (data.status == 200) {
+				that.userDetail=data.data;
+				if(that.redioStatus==1){
+					
+					if(!empty_b(that.userDetail.wechatno)||!empty_b(that.userDetail.wechatName)){
+						
+						uni.navigateTo({
+							url: 'bindAccount/bindAccount?loginType=weixin'
+							
+						})
+						
+					}else{
+						
+						if(parseInt(that.price)==0){
+							uni.showToast({
+								title: "请输入正确的金额",
+								icon: 'none'
+							});
+							return
+						}else if(parseInt(that.price)>parseInt(that.userDetail.umoney)){
+						
+							uni.showToast({
+								title: "金额不正确",
+								icon: 'none'
+							});
+							return
+						}
+						
+					}
+				}else if(that.redioStatus==2){
+					if(!empty_b(that.userDetail.alipayno)||!empty_b(that.userDetail.alipayName)){
+						uni.navigateTo({
+							url:'bindAccount/bindAccount?loginType=zhifubao'
+						})
+					}else{
+						if(parseInt(that.price)==0){
+							uni.showToast({
+								title: "请输入正确的金额",
+								icon: 'none'
+							});
+							return
+						}else if(parseInt(that.price)>parseInt(that.userDetail.umoney)){
+						
+							uni.showToast({
+								title: "金额不正确",
+								icon: 'none'
+							});
+							return
+						}
+					}
+					
+				}
+				
+			} else {
+				uni.showToast({
+					title: data.msg,
+					icon: 'none'
+				});
+			}
+			
+			
 		}
 	}
 };
@@ -133,6 +236,7 @@ page {
 				height: 30upx;
 			}
 			.cell-img {
+				display: flex;
 				height: 80upx;
 				.zfs {
 					font-size: 30upx;

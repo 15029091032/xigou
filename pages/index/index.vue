@@ -1,18 +1,18 @@
 <template>
 	<view class="container">
 		<view class="fixd-head status_bar-1">
-			<view class="citys" v-if="loadingType == 2" @click="sCity()">
+		<!-- 	<view class="citys" v-if="loadingType == 2" @click="sCity()">
 				<span>{{address.area}}</span>
 				<image src="../../static/home/down.png"></image>
-			</view>
+			</view> -->
 			<view class="search-bar" @click="search()">
 				<image src="/static/sou.png" mode=""></image>
 				请输入想要的商品
 			</view>
-			<view class="btns">
+			<!-- <view class="btns">
 				<image v-if="loadingType == 1" src="/static/scan.png" mode=""></image>
 				<image src="/static/msg.png" mode="" @click="goNotice()"></image>
-			</view>
+			</view> -->
 		</view>
 		<!-- 头部轮播 -->
 		<view class="carousel-section">
@@ -381,8 +381,8 @@ export default {
 			if (data.data) {
 				that.proList = that.proList.concat(data.data);
 			}
-			console.log('that.proList===', data.data);
-			console.log('that.proList===', that.proList);
+			// console.log('that.proList===', data.data);
+			// console.log('that.proList===', that.proList);
 			if (data.data.length == that.pageRows) {
 				that.isLoadMore = true;
 				that.loadMore='more'
@@ -909,71 +909,7 @@ page {
 		line-height: 1;
 	}
 }
-.fixd-head {
-	z-index: 100;
-	position: fixed;
-	left: 0;
-	top: 0;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	width: 100%;
-	/* #ifndef APP-PLUS */
-	padding-top: 20upx;
-	/* #endif */
-	padding-right: 20upx;
-	padding-bottom: 20upx;
-	padding-left: 20upx;
-	background-color: #f6f6f6;
-	.search-bar {
-		display: flex;
-		align-items: center;
-		width: 580upx;
-		height: 60upx;
-		padding-left: 20upx;
-		background-color: #fff;
-		border-radius: 28upx;
-		font-size: $font-sm;
-		color: #999999;
-		image {
-			width: 42upx;
-			height: 42upx;
-			margin-right: 10upx;
-		}
-	}
-	.btns {
-		display: flex;
-		align-items: center;
-		height: 60upx;
-		image {
-			width: 40upx;
-			height: 40upx;
-			margin-left: 30upx;
-		}
-	}
-	.citys {
-		display: flex;
-		align-items: center;
-		height: 60upx;
-		margin-right: 20upx;
-		// width: 220upx;
-		image {
-			margin-left: 10upx;
-			width: 20upx;
 
-			height: 10upx;
-		}
-		span {
-			// width: 140upx;
-			font-size: 30upx;
-			white-space: nowrap; /*强制span不换行*/
-			display: inline-block; /*将span当做块级元素对待*/
-			// width: 85%; /*限制宽度 可设px*/
-			overflow: hidden; /*超出宽度部分隐藏*/
-			text-overflow: ellipsis; /*超出部分以点号代替*/
-		}
-	}
-}
 .scroll-x-box {
 	margin-top: 40upx;
 	padding: 0 20upx;

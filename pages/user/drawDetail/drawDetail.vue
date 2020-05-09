@@ -2,20 +2,21 @@
 	<view class="container">
 		<view class="num-wrapper">
 			<view class="left">
-				<view class="num">3221.13</view>
+				<view class="num">{{this.money}}</view>
 				<view class="txt">账户余额</view>
 			</view>
 		</view>
 		<view class="transaction">
 			<view class="t-h">交易明细</view>
-			<view class="t-b">
+			
+			<!-- <view class="t-b">
 				<view class="tbh">2020年2月15日&nbsp&nbsp13:24:25</view>
 				<view class="tbf">
 					<text>订单支付</text>
 					<text>￥+100</text>
 				</view>
-			</view>
-			<view class="t-b">
+			</view> -->
+		<!-- 	<view class="t-b">
 				<view class="tbh">2020年2月16日&nbsp&nbsp13:24:25</view>
 				<view class="tbf">
 					<text>订单支付</text>
@@ -28,20 +29,46 @@
 					<text>订单支付</text>
 					<text>￥+150</text>
 				</view>
-			</view>
+			</view> -->
 		</view>
+		<view  :style="noStatus" class="noOrder" ><image src="../../../static/temp/wu1.png" mode=""></image></view>
 	</view>
 </template>
 
 <script>
+		import { selectAccountByUserid } from '../../../api/user.js';
 	export default {
 		data() {
 			return {
-				
+				dataList:{},
+				noStatus:'display:none',
+				money:0,
 			}
 		},
+		onLoad(option){
+			//上一个页面返回来的月
+			this.money=option.money
+			this.selectDetail();
+		},
 		methods: {
-			
+		async selectDetail(){
+			let that=this;
+			 let data= await	selectAccountByUserid({userid:uni.getStorageSync('dataInfo').id,page:1,rows:10})
+			 
+			 console.log(data)
+			 if(data.status==200){
+				
+				that.dataList = data.data;
+				if(that.dataList.length==0){
+					that.noStatus='display:block';
+				}
+			 }else{
+				 uni.showToast({
+				 	title: data.msg,
+				 	icon: 'none'
+				 });
+			 }
+			},
 		}
 	}
 </script>
@@ -104,4 +131,6 @@ page {
 		}
 	}
 }
+.noOrder{text-align: center;    margin-top: 20%;}
+	.noOrder>image{width: 40%;height: 260upx;}
 </style>

@@ -18,6 +18,37 @@ export function timeCode_b(that) {
 			    1000)
 			}	
 }
+//防止sql注入
+export function detSql(param){
+	  re= /select|update|delete|exec|count|'|"|=|;|>|<|%/i;
+	      if ( re.test(param) ){
+	
+	        return false;
+	      }
+	      return true;
+}
+//防止sql注入
+export function empty_b(param){
+	  if(param==null||param==""||param==undefined||param=="undefined"||param=="null")   return false;
+	 
+	     return param
+}
+//手机号码
+// export function empty_b(phone){
+// 	  if (phone.substring(0,1) == 1) {
+// 	            if (that.phone != 1) {
+// 	                 that.phone = "";
+// 	                   return false
+// 	            }
+// 	        } else if (that.phone.length == 2) {
+// 	            if (that.phone == '11' || that.phone == '12') {
+// 	                 that.phone = "1";
+// 	                   return false
+// 	            }
+// 	        }
+// 	        that.phone = that.phone.replace(/\D/g, '')
+// 	        return true
+// }
 
 
 

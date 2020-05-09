@@ -94,10 +94,11 @@ page{
 	.container{
 		min-height: 100%;
 		background-color: #f6f6f6;
-		padding-top: 10upx;
+		
 		.collection {
 			width: 100%;
 			height: 286upx;
+			margin: 10upx 0;
 			// margin-top: 10upx;
 			background-color: #fff;
 			display: flex;

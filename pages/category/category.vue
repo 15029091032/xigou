@@ -3,8 +3,12 @@
 		<view class="f6-bg">
 			<view class="header">
 				<text>分类</text>
-				<view class="search-bar">
+				<!-- <view class="search-bar">
 					<image src="/static/sou.png" mode="" @click="togo()" ></image>
+					请输入想要的商品
+				</view> -->
+				<view class="search-bar" @click="search()">
+					<image src="/static/sou.png" mode=""></image>
 					请输入想要的商品
 				</view>
 				<view class="btns">
@@ -165,7 +169,12 @@
 				uni.navigateTo({
 					url: `/pages/product/lists/lists?fid=${this.currentId}&sid=${sid}&tid=${tid}`
 				})
-			}
+			},
+			search() {
+				uni.navigateTo({
+					url: '../index/search/search'
+				});
+			},
 		}
 	}
 </script>

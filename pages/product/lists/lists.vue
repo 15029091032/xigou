@@ -126,8 +126,7 @@ page {
 	background-color: #f6f6f6;
 	padding: 20upx;
 }
-.noOrder{width: 100%;text-align: center;margin-top: 20%;}
-.noOrder>image{width: 70%;}
+
 .pro-box {
 	display: flex;
 	justify-content: space-between;
@@ -191,4 +190,6 @@ page {
 		}
 	}
 }
+	.noOrder{width: 100%;text-align: center;margin-top:45%;}
+	.noOrder>image{width: 40%;height: 260upx;}
 </style>

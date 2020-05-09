@@ -1,18 +1,53 @@
 <template>
 	<view class="container">
 		<view class="list-cell b-b m-t"  hover-class="cell-hover" :hover-stay-time="50">
-			<text class="cell-tit">傲娇鬼</text>
+			
+			<input class="cell-tit" v-model="nickname"  placeholder="请输入您要修改的昵称" />
 			<text class="cell-more yticon iconfont icon-icon--"></text>
 		</view>
 	</view>
 </template>
 
 <script>
+import { updateNickname } from '../../../api/user.js';
 	export default {
 		data() {
 			return {
-				
+				nickname:'',
 			}
+		},
+		onLoad(option){
+			this.nickname=option.nickname;
+		},
+		onNavigationBarButtonTap:async  function(e) {
+			let that=this;
+		
+			
+					
+					let d={
+						'userid':uni.getStorageSync('dataInfo').id,
+						'nickname':this.nickname,
+					
+					}
+					let data = await updateNickname(d);
+					
+					 
+					if (data.status == 200) {
+						
+						uni.showToast({
+							title: data.msg,
+							icon: 'none'
+						});
+						that.$api.prePage().getUserInfo();
+						setTimeout(()=>{
+							uni.navigateBack()
+						}, 800)
+					} else {
+						uni.showToast({
+							title: data.msg,
+							icon: 'none'
+						});
+					}
 		},
 		methods: {
 			

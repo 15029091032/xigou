@@ -17,19 +17,20 @@
 				</view>
 			</view>
 		</view>
-		<view class="collection">
-			<image class="colle-left" src="../../../static/xiangji.png"></image>
+		<view class="collection" v-for="(item, index) in arryData" :key="index" >
+			<image class="colle-left" :src="item.shop_img"></image>
 			<view class="colle-right">
-				<view class="crh">{{shopInfo.name}}</view>
-				<view class="crb">规格：&nbsp{{JSON.parse(shopInfo.skuList)[0].skuName}}g</view>
+				<view class="crh">{{item.shop_name}}</view>
+				<view class="crb">规格：&nbsp{{item.sku_name}}g</view>
 				<view class="crf">
 					<view class="crf-l">
-						<text class="c-v">✖️{{shopInfo.number}}</text>
-						<text class="prc">￥{{shopInfo.price}}</text>
+						<text class="c-v">✖️{{item.shop_num}}</text>
+						<text class="prc">￥{{item.sku_price}}</text>
 					</view>
 				</view>
 			</view>
 		</view>
+		
 		<view class="colle-rt">
 			<text>应付金额</text>
 			<text>¥{{shopInfo.countPrice}}</text>
@@ -79,18 +80,41 @@ export default {
 	data() {
 		return {
 			value:'r1',
-			
+			skuName:0,
 			addressList:[],
 			option:{},
 			shopInfo:{},
+			arryData:[],
 		};
 	},
 	async onLoad(option){
 	  let that=this;
 	
-	  that.shopInfo=option;
-	  that.shopInfo.countPrice=(parseInt(that.shopInfo.price)*parseInt(that.shopInfo.number)).toFixed(2)
-	  
+	   that.shopInfo=option
+	   console.log("shopInfo",JSON.parse(that.shopInfo.arryData))
+	  /**
+	   * type  1 表示商品详情多来的   2表示购物车过来的
+	   * */
+	  if(that.shopInfo.type==1){
+		 
+		   
+	  }else if(that.shopInfo.type==2){
+			
+			  
+	  }
+	 
+	 that.arryData=JSON.parse(that.shopInfo.arryData)
+	 
+	 
+	 let countPrice=0;
+	 
+	 this.arryData.forEach(item => {
+	 	countPrice=countPrice+(parseInt(item.sku_price)*parseInt(item.shop_num));
+	 		
+	 });
+	 	 that.shopInfo.countPrice=countPrice
+	 
+		
 		Promise.all([this.address()]);
 	},
 	

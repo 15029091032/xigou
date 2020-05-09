@@ -175,7 +175,22 @@
 		}, {
 			"path": "pages/accountManagement/changPhone/changPhone",
 			"style": {
-				"navigationBarTitleText": "更换手机"
+				"navigationBarTitleText": "更换手机",
+				"app-plus": {
+					"titleSize":"30upx",
+					"bounce": "none", //关闭窗口回弹效果
+					"titleNView": {
+						"titlecolor": "#666666",
+						"buttons": [ //原生标题栏按钮配置,
+							{
+								"type": "none",
+								"text": "确定&nbsp&nbsp",
+								"float": "right",
+								"fontSize": "30upx"
+							}
+						]
+					}
+				}
 			}
 		}, {
 			"path": "pages/profile/profile",

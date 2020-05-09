@@ -128,3 +128,88 @@ export function selectConpostByUserid(data) {
 		method: 'post',
 	},{...data})
 }
+
+/**
+ * @param {data} 用户个人信息
+ */
+export function selectAppUserByUserid(data) {
+	return http.httpTokenRequest({
+		url: 'user/selectAppUserByUserid',
+		method: 'post',
+	},{...data})
+}
+
+/**
+ * @param {data} 交易明细列表
+ */
+export function selectAccountByUserid(data) {
+	return http.httpTokenRequest({
+		url: 'user/selectAccountByUserid',
+		method: 'post',
+	},{...data})
+}
+/**
+ * @param {data} 修改手机号
+ */
+export function updatePhone(data) {
+	return http.httpTokenRequest({
+		url: 'user/updatePhone',
+		method: 'post',
+	},{...data})
+}
+/**
+ * @param {data} 绑定微信/支付宝
+ */
+export function updateAccount(data) {
+	return http.httpTokenRequest({
+		url: 'user/updateAccount',
+		method: 'post',
+	},{...data})
+}
+
+
+/**
+ * @param {data} 修改昵称
+ */
+export function updateNickname(data) {
+	return http.httpTokenRequest({
+		url: 'user/updateNickname',
+		method: 'post',
+	},{...data})
+}
+/**
+ * @param {data} 修改性别
+ */
+export function updateSex(data) {
+	return http.httpTokenRequest({
+		url: 'user/updateSex',
+		method: 'post',
+	},{...data})
+}
+
+
+/**
+ * @param {data} 修改头像
+ */
+export function updateHeadImg(data) {
+	return http.httpTokenRequest({
+		url: 'user/updateHeadImg',
+		method: 'post',
+	},{...data})
+}
+
+/**
+ * @param {data} 意见反馈
+ */
+export function addFeedBack(data) {
+	return http.httpTokenRequest({
+		url: 'user/addFeedBack',
+		method: 'post',
+	},{...data})
+}
+
+
+
+
+
+

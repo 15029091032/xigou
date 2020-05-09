@@ -43,7 +43,7 @@
 			},
 			value: {
 				type: Number,
-				default: 0
+				default: 1
 			},
 			min: {
 				type: Number,
@@ -88,6 +88,7 @@
 		},
 		methods: {
 			_calcValue(type) {
+				// alert(this.value)
 				const scale = this._getDecimalScale();
 				let value = this.inputValue * scale;
 				let newValue = 0;
@@ -120,6 +121,8 @@
 					return;
 				}
 				this.inputValue = newValue / scale;
+				console.log("_calcValue",this.inputValue)
+				uni.$emit('getNumber',{number:this.inputValue})
 			},
 			_getDecimalScale() {
 				let scale = 1;
@@ -143,6 +146,7 @@
 				}
 
 				this.inputValue = value
+				console.log("_onBlur",this.inputValue)
 			}
 		}
 	}

@@ -12,19 +12,19 @@
 			</view>
 			<view class="user-info">
 				<view class="left">
-					<view class="name">Ethwe:Y</view>
+					<view class="name">{{userDetail.nickname}}</view>
 					<view class="link" >企业入驻 <text class="yticon icon-you"></text></view>
 				</view>
-				<image class="avatar" src="/static/avatar.png" mode=""></image>
+				<image class="avatar" :src="userDetail.headImg" mode=""></image>
 			</view>
-			<view class="num-wrapper" @click="goWithDraw()">
+			<view class="num-wrapper" >
 				<view class="left">
-					<view class="num">1000.00</view>
+					<view class="num">{{userDetail.umoney}}</view>
 					<view class="txt">账户余额</view>
 				</view>
 				<view class="right">
-					<view class="link">查看详情<text class="yticon icon-you"></text></view>
-					<view class="btn">
+					<view class="link" @click="goselectDet(userDetail.umoney)">查看详情<text class="yticon icon-you"></text></view>
+					<view class="btn" @click="goWithDraw(userDetail.umoney)">
 						<image src="/static/icon-003.png" mode=""></image>
 						<text>提现</text>
 					</view>
@@ -57,7 +57,7 @@
 			</view>
 		</view>
 		<!-- plus -->
-		<view class="plus-wrapper" @click="plus()">
+	<!-- 	<view class="plus-wrapper" @click="plus()">
 			<view class="plus-title">
 				<view class="title">成为PLUS会员</view>
 				<view class="more">
@@ -82,7 +82,7 @@
 					<image class="hots" src="../../static/icon-005.png"></image>
 				</view>
 			</view>
-		</view>
+		</view> -->
 		<!-- 基础服务 -->
 		<view class="service">
 			<view class="se-title">基础服务</view>
@@ -123,6 +123,7 @@
 <script>  
 	import listCell from '@/components/mix-list-cell';
 	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
+	import { selectAppUserByUserid } from '../../api/user.js';
     import {  
         mapState 
     } from 'vuex';  
@@ -135,6 +136,7 @@
 				coverTransform: 'translateY(0px)',
 				coverTransition: '0s',
 				moving: false,
+				userDetail:{},
 				companyList:[
 					{
 						img:require('../../static/slices/12.png'),
@@ -170,6 +172,8 @@
 			}
 		},
 		onLoad(){
+			
+			this.getUserInfo()
 		},
 		onNavigationBarButtonTap(e) {
 		    console.log("success")        
@@ -199,6 +203,29 @@
 			...mapState(['hasLogin','userInfo'])
 		},
         methods: {
+			async getUserInfo(){
+				let that=this;
+				 
+				let data= await selectAppUserByUserid({userid:uni.getStorageSync('dataInfo').id})
+				
+				console.log("userInfo",data)
+				if (data.status == 200) {
+					that.userDetail=data.data;
+				} else {
+					uni.showToast({
+						title: data.msg,
+						icon: 'none'
+					});
+				}
+				
+				
+			},
+			 goselectDet(money){
+			
+				uni.navigateTo({
+					url:`drawDetail/drawDetail?money=${money}`,
+				})
+			},
 			handleSetUp(){
 				uni.navigateTo({
 					url:'../set/set'
@@ -225,9 +252,9 @@
 					url:'../order/order'
 				})
 			},
-			goWithDraw() {
+			goWithDraw(money) {
 				uni.navigateTo({
-					url: './withdraw/withdraw'
+					url: `./withdraw/withdraw?money=${money}`,
 				})
 			},
 			goCoupon() {
@@ -472,7 +499,7 @@
 		.se-box{
 			display: flex;
 			flex-wrap: wrap;
-			padding:0 37upx;
+			padding:10upx 0upx;
 			.item{
 				display: flex;
 				flex-direction: column;

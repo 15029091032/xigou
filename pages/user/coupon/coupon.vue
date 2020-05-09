@@ -110,6 +110,6 @@
 			}
 		}
 	}
-	.noOrder{width: 100%;text-align: center;margin-top: 20%;}
-	.noOrder>image{width: 70%;}
+	.noOrder{width: 100%;text-align: center;margin-top:45%;}
+	.noOrder>image{width: 40%;height: 260upx;}
 </style>

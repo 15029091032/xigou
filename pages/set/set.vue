@@ -22,7 +22,7 @@
 		</view> -->
 		<view class="list-cell m-t b-b" @click="navTo('版本检测')" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">版本检测</text>
-			<text class="ct">v1.0</text>
+			<text class="ct">v{{version}}</text>
 		</view>
 		<view class="list-cell b-b" @click="goout()" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">退出登录</text>
@@ -48,15 +48,27 @@
 	export default {
 		data() {
 			return {
-				
+					version:'1.0.0',
 			};
+		},
+		onLoad(){
+			try{
+				this.version=plus.runtime.version
+			}catch(e){
+				//TODO handle the exception
+			}
 		},
 		methods:{
 			...mapMutations(['logout']),
 
-			// navTo(url){
-			// 	this.$api.msg(`跳转到${url}`);
-			// },
+			navTo(url){
+				
+			
+				// uni.navigateTo({
+				// 	url: '../login/login'
+				// })
+				// this.$api.msg(`跳转到${url}`);
+			},
 			goout() {
 				uni.navigateTo({
 					url: '../login/login'

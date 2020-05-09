@@ -50,6 +50,7 @@
 									:index="keys"
 									:parentIndex="index"
 									@eventChange="numberChange"
+									
 								></uni-number-box>
 							</view>
 							<!-- <text class="del-btn yticon icon-fork" @click="deleteCartItem(index)"></text> -->
@@ -158,8 +159,9 @@ export default {
 			console.log(this.cartList);
 			// this.cartList = data.data;
 			let list = data.data;
-			
+		
 			let cartList = list.map(item => {
+				
 				item.checked = false;
 				console.log(item);
 				item.shopList.forEach((goods, index) => {
@@ -167,7 +169,8 @@ export default {
 				});
 				return item;
 			});
-
+			
+			
 		
 			
 			this.cartList = cartList;
@@ -175,9 +178,22 @@ export default {
 		},
 		// 确认订单
 		goConfirms() {
-			uni.navigateTo({
-				url: './confrims/confrims'
+			
+		
+			let arryData=[];
+			this.cartList.forEach(item => {
+				 item.shopList.forEach(goods => {
+					 if(goods.isChecked==true){
+						arryData.push(goods)
+					 }
+				 })
+		
 			});
+		
+			uni.navigateTo({
+				url: `./confrims/confrims?type=2&arryData=${JSON.stringify(arryData)}`,
+			});
+		
 		},
 		// //监听image加载完成
 		// onImageLoad(key, index) {
@@ -224,6 +240,8 @@ export default {
 				item.checked = false;
 			}
 			this.calcTotal();
+			
+			console.log("cartList+++++",this.cartList)
 		},
 
 		// 商品全选
@@ -294,19 +312,24 @@ export default {
 				content: '是否要删除该商品？',
 				success: res => {
 					if (res.confirm) {
+						
+						
+					
+						
 						let arryShop=[];
 					
 					    self.cartList.forEach((item, index) => {
 							
 					    	var arr = item.shopList.filter(goods => {
+								if(goods.isChecked==true)
 								arryShop.push(goods.id);
-					    		return goods.isChecked == false;
+					     		return goods.isChecked == false;
 					    	});
 					    	item.shopList = arr;
 							
 					    });
 						
-					self.deleteShop(arryShop)
+					 self.deleteShop(arryShop)
 						
 						
 					} else if (res.cancel) {
@@ -335,11 +358,30 @@ export default {
 		},
 		//清空
 		clearCart() {
+				let self = this;
 			uni.showModal({
 				content: '清空购物车？',
 				success: e => {
 					if (e.confirm) {
-						this.cartList = [];
+						
+						
+												
+							let arryShop=[];
+											
+						   self.cartList.forEach((item, index) => {
+													
+						   	var arr = item.shopList.filter(goods => {
+										
+									arryShop.push(goods.id);
+						    		return goods.isChecked == false;
+						   	});
+						   	item.shopList = arr;
+													
+						   });
+												
+						self.deleteShop(arryShop)
+						
+						
 					}
 				}
 			});

@@ -93,7 +93,7 @@
 				<view class="r-h">
 				<!-- 	<view class="r-hf"><text>{{editItem.secondeTypeId}}</text></view>
 					<view class="r-ht"><text>{{editItem.secondeTypeId}}</text></view> -->
-					<view  v-for="(item,index) in dataDetail.skuList" :key="index" :name="item.id"  @click="choiceSku(item.id,item.skuPrice)"  :class="index==0?'r-hf status_but':'r-ht status_but'"   ><text>{{item.skuName}}</text></view>
+					<view  v-for="(item,index) in dataDetail.skuList" :key="index" :name="item.id"  @click="choiceSku(item.id,item.skuPrice,item.skuName)"  :class="index==0?'r-hf status_but':'r-ht status_but'"   ><text>{{item.skuName}}</text></view>
 
 				</view>
 				
@@ -162,26 +162,24 @@ export default {
 	},
 	async onLoad(option) {
 	
+		let that=this;
+		that.editItem = JSON.parse(option.editItem);
 		
-		this.editItem = JSON.parse(option.editItem);
-		
-		console.log("editItem",this.editItem);
+		console.log("editItem",that.editItem);
 		
 		 
-		const data = await selectShopByid({shopid:this.editItem.id,userid:uni.getStorageSync('dataInfo').id});
+		const data = await selectShopByid({shopid:that.editItem.id,userid:uni.getStorageSync('dataInfo').id});
 		
 		
-		 // this.price=data.data.sellPrice;
-		 // this.skuList=data.data.skuList
-		 // this.name=data.data.shopName
-		 this.dataDetail=data.data;
+		 that.dataDetail=data.data;
 		if(data.data.is_conlect==1){
-			this.favorite=true;
+			that.favorite=true;
 		}
-		this.imgUrls=this.dataDetail.imgUrls.split(',');
-		this.desc=this.dataDetail.detilas.split(',');	
-		this.skuid=this.dataDetail.skuList[0].id;
-		this.skuPrice=this.dataDetail.skuList[0].skuPrice;
+		that.imgUrls=that.dataDetail.imgUrls.split(',');
+		that.desc=that.dataDetail.detilas.split(',');	
+		that.skuid=that.dataDetail.skuList[0].id;
+		that.skuPrice=that.dataDetail.skuList[0].skuPrice;
+		that.skuName=that.dataDetail.skuList[0].skuName;
 		// 	for (let cItem of this.specChildList) {
 		// 		if (cItem.pid === item.id) {
 		// 			this.$set(cItem, 'selected', true);
@@ -190,7 +188,15 @@ export default {
 		// 		}
 		// 	}
 		// });
-		this.shareList = await this.$api.json('shareList');
+		
+		
+		uni.$on('getNumber',function(data){
+			
+			
+		     that.number= data.number;
+			
+		 })
+		that.shareList = await that.$api.json('shareList');
 		
 	
 	},
@@ -237,10 +243,31 @@ export default {
 					this.addshopCar()
 				
 				}else if(that.type==3){
-				
-	
+					
+					
+				// let d={
+				// 	'userid':uni.getStorageSync('dataInfo').id,			
+				// 	'shopid':that.dataDetail.shopid,
+				// 	'skuid':that.skuid,
+				// 	'shop_price':that.skuPrice,
+				// 	'num':that.number,
+				// 	'type':uni.getStorageSync('loadingType'),
+				// }
+				 
+					console.log(that.dataDetail.shopImg)
+				let arryData=[{
+					sku_price:that.skuPrice,
+					 shop_img:that.dataDetail.shopImg,
+					sku_name:this.skuName,
+					id:that.skuid,
+					shopid:that.dataDetail.shopid,
+					shop_name:this.dataDetail.shopName,
+					shop_num:that.number,
+					
+				}]
+		
 						uni.navigateTo({
-							url: `../cart/confrims/confrims?type=1&number=${that.number}&price=${that.dataDetail.sellPrice}&skuList=${JSON.stringify(this.dataDetail.skuList)}&name=${this.dataDetail.shopName}`
+							url: `../cart/confrims/confrims?type=1&arryData=${JSON.stringify(arryData)}`
 						});
 				
 				}
@@ -298,6 +325,7 @@ export default {
 				'type':uni.getStorageSync('loadingType'),
 			}
 			
+		
 			let data = await addOrderShop(d);
 			
 			
@@ -333,9 +361,10 @@ export default {
 			}
 			
 		},
-		choiceSku(id,price){
+		choiceSku(id,price,skuName){
 			this.skuid=id;
 			this.skuPrice=price;
+			this.skuName=skuName;
 			
 		var skuArry=document.getElementsByClassName("status_but")
 		for(let i=0;i<skuArry.length;i++){
