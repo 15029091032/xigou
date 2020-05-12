@@ -93,13 +93,14 @@
 					password
 				};
 				const result = await this.$api.json('userInfo');
-				if(result.status === 1){
-					this.login(result.data);
-                    uni.navigateBack();  
-				}else{
-					this.$api.msg(result.msg);
-					this.logining = false;
-				}
+				console.log(JSON.stringify(result))
+				// if(result.status === 1){
+				// 	this.login(result.data);
+    //                 uni.navigateBack();  
+				// }else{
+				// 	this.$api.msg(result.msg);
+				// 	this.logining = false;
+				// }
 			}
 		},
 

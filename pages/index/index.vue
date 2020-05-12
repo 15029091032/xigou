@@ -1,19 +1,34 @@
 <template>
 	<view class="container">
-		<view class="fixd-head status_bar-1">
-		<!-- 	<view class="citys" v-if="loadingType == 2" @click="sCity()">
-				<span>{{address.area}}</span>
-				<image src="../../static/home/down.png"></image>
+		<view class="header">
+			<view class="addr_sty"  v-if="loadingType == 2" @click="sCity()">{{address.area}}<image src="../../static/home/down.png" class="icon_btoom"></image></view>
+			<!-- <view class="search-bar">
+				<image src="/static/sou.png" mode="" @click="togo()" ></image>
+				请输入想要的商品
 			</view> -->
 			<view class="search-bar" @click="search()">
 				<image src="/static/sou.png" mode=""></image>
 				请输入想要的商品
 			</view>
+			<view class="btns">
+					<image v-if="loadingType == 1" class="img" src="/static/scan.png"  @click="scan()"></image>
+					<image src="/static/msg.png"  mode="" @click="goNotice()"></image>
+			</view>
+		</view>
+		<!-- <view class="fixd-head status_bar-1"> -->
+			<!-- <view class="citys" v-if="loadingType == 2" @click="sCity()">
+				<span>{{address.area}}</span>
+				<image src="../../static/home/down.png"></image>
+			</view> -->
+		<!-- 	<view class="search-bar" @click="search()">
+				<image src="/static/sou.png" mode=""></image>
+				请输入想要的商品
+			</view> -->
 			<!-- <view class="btns">
 				<image v-if="loadingType == 1" src="/static/scan.png" mode=""></image>
 				<image src="/static/msg.png" mode="" @click="goNotice()"></image>
 			</view> -->
-		</view>
+		<!-- </view> -->
 		<!-- 头部轮播 -->
 		<view class="carousel-section">
 			<!-- 标题栏和状态栏占位符 -->
@@ -238,6 +253,14 @@ export default {
 		}
 	},
 	methods: {
+		scan(){
+			uni.scanCode({
+			    success: function (res) {
+			        console.log('条码类型：' + res.scanType);
+			        console.log('条码内容：' + res.result);
+			    }
+			});
+		},
 		onClickItem(index) {
 			let that = this;
 			console.log('====', index);
@@ -1128,4 +1151,46 @@ page {
 	height: 65upx !important;
 	z-index: 999999;
 }
+.header{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		background-color: #fff;
+		padding: 20upx;
+		text{
+			font-size: 36upx;
+			color: #333333;
+		}
+		.icon_btoom{
+			    width: 16upx;
+			    height: 16upx
+		}
+		.addr_sty{display: flex;
+    align-items: center;font-size: 30upx;
+	    overflow: hidden;
+	    width: 100upx;
+	    white-space: nowrap;}
+		.search-bar{
+			display: flex;
+			align-items: center;
+			width:540upx;
+			height: 60upx;
+			padding-left: 20upx;
+			background-color: #F6F6F6;
+			border-radius:28upx;
+			font-size: $font-sm;
+			color: #999999;
+			image{
+				width: 42upx;
+				height: 42upx;
+				margin-right: 10upx;
+			}
+		}
+		.btns image{
+			width: 44upx;
+			margin-right: 20upx;
+		
+			height: 40upx;
+		}
+	}
 </style>

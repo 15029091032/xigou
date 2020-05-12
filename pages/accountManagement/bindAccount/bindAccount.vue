@@ -1,15 +1,15 @@
 <template>
 	<view class="container">
 		<view class="list-cell b-b m-t" hover-class="cell-hover" :hover-stay-time="50">
-			<input class="cell-tit" v-if="this.typeVule.loginType=='zhifubao'" v-model="typeVule.alipayno" placeholder="请输入支付宝账号"  />
-			<input class="cell-tit" v-if="this.typeVule.loginType=='weixin'" v-model="typeVule.wechatno" placeholder="请输入微信账号"  />
+			<input class="cell-tit" v-if="typeVule.loginType=='zhifubao'" v-model="typeVule.alipayno" placeholder="请输入支付宝账号"  />
+			<input class="cell-tit" v-if="typeVule.loginType=='weixin'" v-model="typeVule.wechatno" placeholder="请输入微信账号"  />
 			<!-- <text class="cell-tit" v-if="this.typeVule=='zhifubao'" :vaule="this.typeVule.alipayno">请输入支付宝账号</text>
 			<text class="cell-tit" v-if="this.typeVule=='weixin'" :vaule="this.typeVule.wechatno">请输入微信账号</text> -->
 		</view>
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50">
 			
-			<input class="cell-tit" v-if="this.typeVule.loginType=='zhifubao'" v-model="typeVule.alipayName" placeholder="请输入支付宝实名姓名"  />
-				<input class="cell-tit" v-if="this.typeVule.loginType=='weixin'" v-model="typeVule.wechatName" placeholder="请输入姓名"  />
+			<input class="cell-tit" v-if="typeVule.loginType=='zhifubao'" v-model="typeVule.alipayName" placeholder="请输入支付宝实名姓名"  />
+				<input class="cell-tit" v-if="typeVule.loginType=='weixin'" v-model="typeVule.wechatName" placeholder="请输入姓名"  />
 			
 		</view>
 	</view>
@@ -26,8 +26,8 @@ export default {
 	},
 	onLoad(option) {
 		this.typeVule = option
-		
-		
+		console.log("this.typeVule.loginType",JSON.stringify(this.typeVule))
+		console.log(this.typeVule.loginType)
 	},
 	onNavigationBarButtonTap:async  function(e) {
 		let that=this;
@@ -113,4 +113,5 @@ page {
 		margin-right: 10upx;
 	}
 }
+
 </style>

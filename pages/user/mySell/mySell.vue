@@ -2,7 +2,10 @@
 	<view class="container">
 		<uni-segmented-control :current="current" :values="items" @clickItem="onClickItem" style-type="text" active-color="#FFE200"></uni-segmented-control>
 		<view class="content" v-if="current === 0">
-			<view class="card">
+			<view class="empty_bg">
+				 <image src="../../../static/temp/wu1.png" class="img" v-if="listItem.list1.length==0"  ></image>
+		   </view>
+		<!-- 	<view class="card">
 				<view class="card-hd">
 					<view class="hd-left">订单编号：C01254638820</view>
 					<view class="hd-right ">待付款</view>
@@ -41,90 +44,15 @@
 					<button class="mini-btn action-btn recom" size="mini">联系买家</button>
 					<button class="mini-btn action-btn recom" size="mini">确认发货</button>
 				</view>
-			</view>
-			<view class="card">
-				<view class="card-hd">
-					<view class="hd-left">订单编号：C01254638820</view>
-					<view class="hd-right ">待发货</view>
-				</view>
-				<view class="card-content">
-					<view class="content-left"><image mode="scaleToFill" class="img" src="../../../static/001.png"></image></view>
-					<view class="content-right">
-						<view class="name">
-							<view class="name-left">商品名称</view>
-							<view class="name-right">￥35.00</view>
-						</view>
-						<view class="guige">
-							<view class="guige-left">规格 100g</view>
-							<view class="guige-right">×1</view>
-						</view>
-						<view class="times">订单时间：2020-04-17</view>
-					</view>
-				</view>
-				<view class="card-footer">
-					<view class="top">
-						<view class="left">
-							<text class="dt">订单合计：</text>
-							<text class="price">￥1035.00</text>
-						</view>
-						<view class="right">共1件</view>
-					</view>
-					<view class="bottom">
-						<view class="botton-t">
-							<text>收件人：马花藤</text>
-							<text>18360570821</text>
-						</view>
-						<view class="botton-f">陕西省西安市长安区南长安街壹号</view>
-					</view>
-				</view>
-				<view class="btns" v-if="this.type == true">
-					<button class="mini-btn action-btn recom" size="mini">联系买家</button>
-					<button class="mini-btn action-btn recom" size="mini">确认发货</button>
-				</view>
-			</view>
-			<view class="card">
-				<view class="card-hd">
-					<view class="hd-left">订单编号：C01254638820</view>
-					<view class="hd-right ">已完成</view>
-				</view>
-				<view class="card-content">
-					<view class="content-left"><image mode="scaleToFill" class="img" src="../../../static/001.png"></image></view>
-					<view class="content-right">
-						<view class="name">
-							<view class="name-left">商品名称</view>
-							<view class="name-right">￥35.00</view>
-						</view>
-						<view class="guige">
-							<view class="guige-left">规格 100g</view>
-							<view class="guige-right">×1</view>
-						</view>
-						<view class="times">订单时间：2020-04-17</view>
-					</view>
-				</view>
-				<view class="card-footer">
-					<view class="top">
-						<view class="left">
-							<text class="dt">订单合计：</text>
-							<text class="price">￥1035.00</text>
-						</view>
-						<view class="right">共1件</view>
-					</view>
-					<view class="bottom">
-						<view class="botton-t">
-							<text>收件人：马花藤</text>
-							<text>18360570821</text>
-						</view>
-						<view class="botton-f">陕西省西安市长安区南长安街壹号</view>
-					</view>
-				</view>
-				<view class="btns" v-if="this.type == true">
-					<button class="mini-btn action-btns recoms" size="mini">查看物流</button>
-					<button class="mini-btn action-btns recoms" size="mini">联系买家</button>
-				</view>
-			</view>
+			</view> -->
+	
+			
 		</view>
 		<view class="content" v-if="current === 1">
-			<view class="card">
+			<view class="empty_bg">
+							 <image src="../../../static/temp/wu1.png" class="img" v-if="listItem.list2.length==0"  ></image>
+			</view>
+			<!-- <view class="card">
 				<view class="card-hd">
 					<view class="hd-left">订单编号：C01254638820</view>
 					<view class="hd-right ">待付款</view>
@@ -163,10 +91,13 @@
 					<button class="mini-btn action-btn recom" size="mini">联系买家</button>
 					<button class="mini-btn action-btn recom" size="mini">确认发货</button>
 				</view>
-			</view>
+			</view> -->
 		</view>
 		<view class="content" v-if="current === 2">
-			<view class="card">
+			<view class="empty_bg">
+							 <image src="../../../static/temp/wu1.png" class="img" v-if="listItem.list3.length==0"  ></image>
+			</view>
+			<!-- <view class="card">
 				<view class="card-hd">
 					<view class="hd-left">订单编号：C01254638820</view>
 					<view class="hd-right ">待发货</view>
@@ -205,10 +136,13 @@
 					<button class="mini-btn action-btn recom" size="mini">联系买家</button>
 					<button class="mini-btn action-btn recom" size="mini">确认发货</button>
 				</view>
-			</view>
+			</view> -->
 		</view>
 		<view class="content" v-if="current === 3">
-			<view class="card">
+			<view class="empty_bg">
+							 <image src="../../../static/temp/wu1.png" class="img" v-if="listItem.list4.length==0"  ></image>
+			</view>
+			<!-- <view class="card">
 				<view class="card-hd">
 					<view class="hd-left">订单编号：C01254638820</view>
 					<view class="hd-right ">已完成</view>
@@ -247,26 +181,72 @@
 					<button class="mini-btn action-btns recoms" size="mini">查看物流</button>
 					<button class="mini-btn action-btns recoms" size="mini">联系买家</button>
 				</view>
-			</view>
+			</view> -->
 		</view>
 	</view>
 </template>
 
 <script>
 import uniSegmentedControl from '@/components/uni-segmented-control/uni-segmented-control.vue';
+import { selectOrdersByStatus } from '../../../api/user.js';
+
 export default {
 	data() {
 		return {
-			items: ['全部', '待付款', '待发货', '已完成'],
+			items: ['全部', '待发货', '已发货', '已完成'],
+			listItem:{
+				list1:[],
+				list2:[],
+				list3:[],
+				list4:[]
+			},
 			current: 0,
 			type: true,
 		};
 	},
+	onLoad(){
+		this.selectList(2)
+	},
 	methods: {
+	async	selectList(type){
+			
+			let that=this;
+			 let d={
+				 userid:uni.getStorageSync('dataInfo').id,
+				 status:type,
+				 page :1,
+				 rows :20
+				 }
+			let data= await selectOrdersByStatus(d)
+			
+			console.log("userInfo",data)
+			if (data.status == 200) {
+				if(type==2){
+					 this.listItem.list1=data.data
+				}else if(type==3){
+					 this.listItem.list2=data.data
+				}else if(type==4){
+					 this.listItem.list3=data.data
+				}else if(type==5){
+					 this.listItem.list4=data.data
+				}
+			 
+			} else {
+				uni.showToast({
+					title: data.msg,
+					icon: 'none'
+				});
+			}
+			
+			
+		},
 		onClickItem(e) {
 			if (this.current !== e.currentIndex) {
 				this.current = e.currentIndex;
 			}
+		
+				this.selectList((this.current+2))
+			
 		}
 	}
 };
@@ -276,6 +256,14 @@ export default {
 page {
 	min-height: 100%;
 	background-color: #f6f6f6;
+}
+.empty_bg{
+	text-align: center;
+	    padding: 20% 0;
+		.img{
+			    width: 44%;
+			    height: 150px;
+		}
 }
 .container {
 	min-height: 100%;

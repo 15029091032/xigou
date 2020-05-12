@@ -22,6 +22,9 @@
 import { isEmpty } from '../../../utils/Utils.js';
 import { sendSms, login, userReg } from '../../../api/index.js';
 import { timeCode_b } from '../../../public/base.js';
+import {  
+        mapMutations  
+    } from 'vuex';
 export default {
 	data() {
 		return {
@@ -31,12 +34,13 @@ export default {
 				area: '雁塔区'
 			},
 			loadingType: '1',
-			phone: '15686408836',
+			phone: '15029091032',
 			numberCode: '',
 			butCode:'获取验证码'
 		};
 	},
 	methods: {
+		...mapMutations(['login']),
 		goInto() {
 			this.checkData(0);
 		
@@ -124,18 +128,27 @@ export default {
 			 
 			 
 			if (data.status == 200) {
-			    uni.setStorageSync('dataInfo', data.data);
-				uni.setStorageSync('loadingType', this.loadingType);
-				uni.setStorage({
-					key:'token',
-					data: data.data.token,
-					success() {
+			 //    uni.setStorageSync('dataInfo', data.data);
+				// uni.setStorageSync('loadingType', this.loadingType);
+				// uni.setStorage({
+				// 	key:'token',
+				// 	data: data.data.token,
+				// 	success() {
 						
-					}
-				})
-				uni.switchTab({
-					url: '../../index/index'
-				});
+				// 	}
+				// })
+				// uni.getStorage({
+				// 	key: 'dataInfo',
+				// 	success: (res) => {
+						
+						 this.login(data.data);
+						 uni.switchTab({
+						 	url: '../../index/index'
+						 });
+				// 	}
+				// });
+				
+				
 			} else {
 				uni.showToast({
 					title: data.msg,

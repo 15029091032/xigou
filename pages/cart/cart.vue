@@ -1,11 +1,11 @@
 <template>
 	<view class="container status_bar-1">
 		<!-- 头部 -->
-		<div class="header">
+		<!-- <div class="header">
 			<text>购物车</text>
 			<view class="btns" v-if="!isEdit" @click="isEdit = true">管理</view>
 			<view class="btns" v-else @click="isEdit = false">完成</view>
-		</div>
+		</div> -->
 		<!-- 空白页 -->
 		<view v-if="!hasLogin || empty === true" class="empty">
 			<image src="/static/emptyCart.jpg" mode="aspectFit"></image>
@@ -117,6 +117,7 @@ export default {
 		};
 	},
 	onLoad() {
+	
 		try {
 			
 			const loadingType = uni.getStorageSync('loadingType');
@@ -130,6 +131,10 @@ export default {
 		}
 		this.loadData();
 	},
+	onShow(){
+	console.log("hasLogin的状态：",this.hasLogin)
+	console.log("empty的状态：",this.empty)
+	},
 	watch: {
 		//显示空白页
 		cartList(e) {
@@ -142,6 +147,29 @@ export default {
 	computed: {
 		...mapState(['hasLogin'])
 	},
+	 onNavigationBarButtonTap(e) {  
+	        console.log(e);
+			var webView = this.$mp.page.$getAppWebview();  
+			console.log( this.isEdit)
+			  if(e.index==0){
+				
+				 
+				 if (!this.isEdit){
+					
+					 webView.setTitleNViewButtonStyle(0, {  
+					     text: '完成',  
+					 }); 
+					 
+					 this.isEdit = true
+				 }else{
+					 
+					webView.setTitleNViewButtonStyle(0, {
+					    text: '管理',   
+					}); 
+					 this.isEdit = false;
+				 }
+			  }
+	    },
 	methods: {
 		async add(obj) {
 			let data = await updateOrderShopNum(obj);
@@ -205,7 +233,7 @@ export default {
 		// },
 		navToLogin() {
 			uni.navigateTo({
-				url: '/pages/public/login'
+				url: '/pages/login/login'
 			});
 		},
 		// 店铺全选
@@ -341,7 +369,8 @@ export default {
 			});
 		},
 		async deleteShop(arryShop){
-			let data = await deleteOrderShop({'ids':arryShop})
+			
+			let data = await deleteOrderShop({'ids':JSON.stringify(arryShop)})
 			
 			if (data.status == 200) {
 			  
@@ -684,7 +713,7 @@ page {
 	z-index: 20;
 	position: fixed;
 	left: 0;
-	bottom: 100upx;
+	bottom: 0upx;
 	width: 100%;
 	padding: 0 24upx 0 50upx;
 	background-color: #fff;

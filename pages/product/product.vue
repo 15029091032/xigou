@@ -10,14 +10,14 @@
 		</view>
 
 		<view class="introduce-section">
-			<text class="title">{{ editItem.shopName }}</text>
+			<text class="title">{{ dataDetail.shopName }}</text>
 			<view class="price-box">
 				<view class="p-box">
 					<image src="../../static/vip.png" class="p-t"></image>
-					<text class="v-p">¥{{ editItem.vipPrice }}</text>
+					<text class="v-p">¥{{ dataDetail.vipPrice }}</text>
 				</view>
-				<text class="p-b">市场指导价：{{ editItem.sellPrice }}</text>
-				<text class="p-f">成交量：{{ editItem.saleNum }}</text>
+				<text class="p-b">市场指导价：{{ dataDetail.sellPrice }}</text>
+				<text class="p-f">成交量：{{ dataDetail.saleNum }}</text>
 			</view>
 		</view>
 
@@ -96,9 +96,9 @@
 					<view  v-for="(item,index) in dataDetail.skuList" :key="index" :name="item.id"  @click="choiceSku(item.id,item.skuPrice,item.skuName)"  :class="index==0?'r-hf status_but':'r-ht status_but'"   ><text>{{item.skuName}}</text></view>
 
 				</view>
-				
+				 
 				<view  class="item-right">
-					
+					 
 					<text class="r-tl">数量</text>
 					<uni-number-box
 										class="r-tr"
@@ -143,7 +143,7 @@ export default {
 	},
 	data() {
 		return {
-			editItem: {}, // 接受上个页面传递过来的数据
+			editItemId: {}, // 接受上个页面传递过来的数据
 			dataDetail:{},
 			specClass: 'none',
 			specSelected: [],
@@ -163,12 +163,12 @@ export default {
 	async onLoad(option) {
 	
 		let that=this;
-		that.editItem = JSON.parse(option.editItem);
+		that.editItemId = option.id;
 		
-		console.log("editItem",that.editItem);
+
 		
 		 
-		const data = await selectShopByid({shopid:that.editItem.id,userid:uni.getStorageSync('dataInfo').id});
+		const data = await selectShopByid({shopid:that.editItemId,userid:uni.getStorageSync('dataInfo').id});
 		
 		
 		 that.dataDetail=data.data;
@@ -340,7 +340,7 @@ export default {
 		
 			let d={
 				'userid':uni.getStorageSync('dataInfo').id,			
-				'shopid':that.editItem.id
+				'shopid':that.editItemId
 			}
 			
 			let data = await sureConlectShopsByUserid(d);
@@ -399,7 +399,10 @@ page {
 	position: fixed;
 	z-index: 999;
 	right: 0;
-	top: 10upx;
+	top:  var(--status-bar-height);
+	
+	 padding-top: 10upx;
+	
 }
 .r-g {
 	font-size: 24upx;
@@ -930,6 +933,12 @@ page {
 }
 .c_img{
 	width: 100%;
+	// height: auto;
 	
 }
+// .uni-image{
+// 	img{	
+// 		    position: initial;opacity: 0;
+// 	}
+// }
 </style>

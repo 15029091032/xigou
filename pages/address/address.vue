@@ -158,6 +158,7 @@
 		padding: 20upx 30upx;;
 		background: #fff;
 		position: relative;
+		    margin-bottom: 10upx;
 	}
 	.wrapper{
 		display: flex;

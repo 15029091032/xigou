@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<view class="list">
+<!-- 		<view class="list">
 			<view class="list-l">
 				<image src="../../../../static/home/WechatIMG3.png"></image>
 			</view>
@@ -11,8 +11,8 @@
 				</view>
 				<text class="r-b">亲，有新物品上心</text>
 			</view>
-		</view>
-		<view class="list">
+		</view> -->
+<!-- 		<view class="list">
 			<view class="list-l">
 				<image src="../../../../static/home/WechatIMG2.png"></image>
 			</view>
@@ -23,11 +23,12 @@
 				</view>
 				<text class="r-b">亲，有新物品上心</text>
 			</view>
-		</view>
+		</view> -->
 	</view>
 </template>
 
 <script>
+import {selectMessgeList}	 from '../../../../api/index.js'
 	export default {
 		data() {
 			return {
@@ -39,9 +40,14 @@
 			uni.setNavigationBarTitle({
 				title: option.name
 			})
+			this.serverNotice()
 		},
 		methods: {
-			
+			async serverNotice(){
+				
+				let data= await selectMessgeList({type:2,page:1,rows:20});
+				console.log(data)
+			}
 		}
 	}
 </script>

@@ -294,7 +294,7 @@
 		padding-bottom: 20upx;
 		
 		image{
-			width: 140upx;
+			width: 100%;
 			height: 140upx;
 		}
 	}

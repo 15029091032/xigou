@@ -13,7 +13,7 @@
 			<view class="user-info">
 				<view class="left">
 					<view class="name">{{userDetail.nickname}}</view>
-					<view class="link" >企业入驻 <text class="yticon icon-you"></text></view>
+					<view class="link" @click="linkEnte" >{{userDetail.type==1?'企业入驻':'已入驻'}} <text class="yticon icon-you"></text></view>
 				</view>
 				<image class="avatar" :src="userDetail.headImg" mode=""></image>
 			</view>
@@ -57,7 +57,7 @@
 			</view>
 		</view>
 		<!-- plus -->
-	<!-- 	<view class="plus-wrapper" @click="plus()">
+		<view class="plus-wrapper" @click="plus()"  v-if="userDetail.type==1">
 			<view class="plus-title">
 				<view class="title">成为PLUS会员</view>
 				<view class="more">
@@ -82,7 +82,7 @@
 					<image class="hots" src="../../static/icon-005.png"></image>
 				</view>
 			</view>
-		</view> -->
+		</view>
 		<!-- 基础服务 -->
 		<view class="service">
 			<view class="se-title">基础服务</view>
@@ -124,9 +124,7 @@
 	import listCell from '@/components/mix-list-cell';
 	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
 	import { selectAppUserByUserid } from '../../api/user.js';
-    import {  
-        mapState 
-    } from 'vuex';  
+	import { mapState } from 'vuex'; 
     export default {
 		components: {
 			listCell,uniNavBar
@@ -171,13 +169,30 @@
 				]
 			}
 		},
+		computed: {
+			...mapState(['hasLogin'])
+		},
 		onLoad(){
 			
-			this.getUserInfo()
+			//console.log(this.hasLogin)
+			// if(!this.hasLogin){
+			//  return	uni.navigateTo({
+			// 		url: '/pages/login/login'
+			// 	});
+			// }
+			this.getUserInfo() 
+		},
+		onShow(){	
+			//console.log(this.hasLogin)
+			// if(!this.hasLogin){
+			//  return	uni.navigateTo({
+			// 		url: '/pages/login/login?type="我的"'
+			// 	});
+			// }
 		},
 		onNavigationBarButtonTap(e) {
 		    console.log("success")        
-		},
+		}, 
 		// #ifndef MP
 		// onNavigationBarButtonTap(e) {
 		// 	console.log(e)
@@ -218,6 +233,14 @@
 					});
 				}
 				
+				
+			},
+			linkEnte(){
+				
+				//跳转企业入驻
+				uni.navigateTo({
+					url:'enterprisesInto/qiYeRuZhu',
+				})
 				
 			},
 			 goselectDet(money){
@@ -323,16 +346,19 @@
 					color: #222;
 				}
 				.link{
+					    width: fit-content;
 					display: flex;
 					align-items: center;
-					height:40upx;
+					
 					margin-top: 10upx;
 					font-size: 22upx;
 					background:rgba(255,226,0,1);
 					border-radius:0px 20upx 20upx 0px;
+					padding: 12upx 20upx;
 					.icon-you{
 						margin-top: 5upx;
 						font-size: 20upx;
+						
 					}
 				}
 			}
@@ -406,13 +432,13 @@
 				flex-direction: column;
 				align-items: center;
 				width: 25%;
-				margin-top: 20upx;
+				margin-top: 40upx;
 				image{
 					width: 40upx;
 					height: 35upx;
 				}
 				text{
-					margin-top: 10upx;
+					margin-top: 16upx;
 					font-size: 28upx;
 					color: #515151;
 				}
@@ -505,14 +531,16 @@
 				flex-direction: column;
 				align-items: center;
 				justify-content: center;
-				margin-top: 20upx;
-				margin-right: 76upx;
+			
+				
+				width: 25%;
+				    margin-top: 40upx;
 				image{
 					width: 40upx;
 					height: 38upx;
 				}
 				.txt{
-					margin-top: 10upx;
+					margin-top: 20upx;
 					color: #555;
 					font-size: 24upx;
 				}
@@ -524,14 +552,14 @@
 		&.company .se-box{
 			padding: 0;
 			.item{
-				width: 145upx;
-				margin-right: 120upx;
-				margin-top: 35upx;
+				
+				    width: 32.3%;
+				margin-top: 40upx;
 				&:nth-child(3n){
 					margin-right: 0;
 				}
 				&:nth-child(4n){
-					margin-right: 120upx;
+					
 				}
 			}
 		}

@@ -209,7 +209,70 @@ export function addFeedBack(data) {
 }
 
 
+/**
+ * @param {data} 意见反馈
+ */
+export function realAppUser(data) {
+	return http.httpTokenRequest({
+		url: 'user/realAppUser',
+		method: 'post',
+	},{...data})
+}
 
 
 
+
+
+
+/**
+ * @param {data} 1级分类
+ */
+export function selectFristTypeList(data) {
+	return http.httpTokenRequest({
+		url: 'home/selectFristTypeList',
+		method: 'post',
+	},{...data})
+}
+
+/**
+ * @param {data} 更具一级分类查询2级分类
+ */
+export function selectTypeListByPid(data) {
+	return http.httpTokenRequest({
+		url: 'home/selectTypeListByPid',
+		method: 'post',
+	},{...data})
+}
+
+/**
+ * @param {data} 生成邀请码
+ */
+export function selectPoster(data) {
+	return http.httpTokenRequest({
+		url: 'user/selectPoster',
+		method: 'post',
+	},{...data})
+}
+
+
+
+/**
+ * @param {data} 我的团队
+ */
+export function selecttTeamByUserid(data) {
+	return http.httpTokenRequest({
+		url: 'user/selecttTeamByUserid',
+		method: 'post',
+	},{...data})
+}
+
+/**
+ * @param {data} 我卖出的
+ */
+export function selectOrdersByStatus(data) {
+	return http.httpTokenRequest({
+		url: 'order/selectOrdersByStatus',
+		method: 'post',
+	},{...data})
+}
 

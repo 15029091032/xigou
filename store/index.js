@@ -10,14 +10,18 @@ const store = new Vuex.Store({
 	},
 	mutations: {
 		login(state, provider) {
-
+			// console.log("state",state)
+			// console.log("provider",provider)
+			
+			 
+			
+			uni.setStorageSync('dataInfo', provider);
+			uni.setStorageSync('loadingType', provider.type);
+			uni.setStorage({key:'token',	data: provider.token,success() {}})
 			state.hasLogin = true;
-			state.userInfo = provider;
-			uni.setStorage({//缓存用户登陆状态
-			    key: 'userInfo',  
-			    data: provider  
-			}) 
-			console.log(state.userInfo);
+			state.dataInfo = provider;
+		
+			 console.log("vuex用户信息储存:",state);
 		},
 		logout(state) {
 			state.hasLogin = false;

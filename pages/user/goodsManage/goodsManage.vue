@@ -1,48 +1,49 @@
 <template>
 	<view class="container">
 		<text class="upload" @click="upload()">上传</text>
-		 <uni-segmented-control :current="current" :values="items" @clickItem="onClickItem" style-type="text" active-color="#FFE200"></uni-segmented-control>
+		 <uni-segmented-control :current="(current)" :values="items" @clickItem="onClickItem" style-type="text" active-color="#FFE200"></uni-segmented-control>
 		        <view class="content">
 		            <view v-show="current === 0">
-		                <image src="../../../static/temp/wu1.png" class="bijing" v-if="recommend==1"></image>
-		                <view class="collection" v-if="recommend==0">
-		                	<image class="colle-left" src="../../../static/xiangji.png"></image>
-		                	<image src="../../../static/home/bao.png" class="cl-t"></image>
+		                <image src="../../../static/temp/wu1.png" class="bijing" v-if="listData.class1.length<=0"></image>
+		                <view class="collection" v-for="(item,index) in listData.class1"  :key="index">
+		                	<image class="colle-left" :src="item.shopImg"></image>
+		                	<!-- <image src="../../../static/home/bao.png" class="cl-t"></image> -->
 		                	<view class="colle-right">
-		                		<view class="crh">博纳天纯由猫粮博纳天纯由猫粮</view>
-		                		<view class="crb">￥10.9</view>
+		                		<view class="crh">{{item.shopName}}</view>
+		                		<view class="crb">￥{{item.realPrice}}</view>
 		                		<view class="crf">
 		                			<view class="crf-l">
 		                				<image class="c-v" src="../../../static/vip.png"></image>
-		                				<text class="prc">￥9.9</text>
+		                				<text class="prc">￥{{item.vipPrice}}</text>
 		                			</view>
 		                		</view>
 		                		<view class="caozuo">
-		                			<text>下架</text>
-		                			<text>编辑</text>
-		                			<text style="color: #ef4321;">删除</text>
+		                			<text @click="upTopGoods(item.id)">下架</text>
+		                			<text  @click="upload(item.id)">编辑</text>
+		                			<text style="color: #ef4321;"  @click="deleteGoods(item.id)">删除</text>
 		                		</view>
 		                	</view>
 		                </view>
+					
 		            </view>
-		            <view v-show="current === 1">
-		                <image src="../../../static/temp/wu1.png" class="bijing" v-if="this.recommend==1"></image>
-		                <view class="collection" v-if="recommend==0">
-		                	<image class="colle-left" src="../../../static/xiangji.png"></image>
-		                	<image src="../../../static/home/bao.png" class="cl-t"></image>
+		            <view v-show="current === 1 ">
+		                <image src="../../../static/temp/wu1.png" class="bijing" v-if="listData.class2.length<=0"></image>
+		                <view class="collection" v-for="(item,index) in listData.class2"  :key="index">
+		                	<image class="colle-left" :src="item.shopImg"></image>
+		                	<!-- <image src="../../../static/home/bao.png" class="cl-t"></image> -->
 		                	<view class="colle-right">
-		                		<view class="crh">博纳天纯由猫粮博纳天纯由猫粮</view>
-		                		<view class="crb">￥10.9</view>
+		                		<view class="crh">{{item.shopName}}</view>
+		                		<view class="crb">￥{{item.realPrice}}</view>
 		                		<view class="crf">
 		                			<view class="crf-l">
 		                				<image class="c-v" src="../../../static/vip.png"></image>
-		                				<text class="prc">￥9.9</text>
+		                				<text class="prc">￥{{item.vipPrice}}</text>
 		                			</view>
 		                		</view>
 		                		<view class="caozuo">
-		                			<text>上架</text>
-		                			<text>编辑</text>
-		                			<text style="color: #ef4321;">删除</text>
+		                			<text @click="upTopGoods(item.id)">上架</text>
+		                			<text  @click="upload(item.id)">编辑</text>
+		                			<text style="color: #ef4321;" @click="deleteGoods(item.id)">删除</text>
 		                		</view>
 		                	</view>
 		                </view>
@@ -53,24 +54,108 @@
 
 <script>
 import uniSegmentedControl from '@/components/uni-segmented-control/uni-segmented-control.vue';
+
+import {selectShopsByUserid,upShopByUserid,deleteShopByUserid} from '../../../api/goods.js';
 export default {
 	data() {
 		return {
-			recommend :0,
+		
 			items: ['已发布', '草稿箱'],
-			current: 1
+			current: 0,
+			listData:{
+				class1:[],
+				class2:[],
+			},
 		};
 	},
 	components: { uniSegmentedControl },
+	onLoad(){
+		this.selectGoods()
+	},
 	methods: {
+	 async	selectGoods(){
+		 let that=this;
+			let d={
+				userid:uni.getStorageSync('dataInfo').id,
+				page:1,
+				rows  :20,
+				type :(that.current+1)
+			}
+			let data=await selectShopsByUserid(d)
+			if (data.status == 200) {
+				if((that.current+1)==1){
+					
+					that.listData.class1=data.data;
+				}else if((that.current+1)==2){
+					that.listData.class2=data.data;
+				}
+			} else {
+				uni.showToast({
+					title: data.msg,
+					icon: 'none'
+				});
+			}
+		},
+		async  upTopGoods(id){
+			
+			let that=this;
+						
+						let data=await upShopByUserid({shopid:id})
+						if (data.status == 200) {
+							uni.showToast({
+								title: data.msg,
+								icon: 'none'
+							});
+							setTimeout(()=>{
+								that.selectGoods()
+							},800)
+							
+						} else {
+							uni.showToast({
+								title: data.msg,
+								icon: 'none'
+							});
+						}
+			
+		},
+		async deleteGoods(id){
+			let that=this;
+						
+						let data=await deleteShopByUserid({shopid:id})
+						if (data.status == 200) {
+							uni.showToast({
+								title: data.msg,
+								icon: 'none'
+							});
+							setTimeout(()=>{
+								that.selectGoods()
+							},800)
+							
+						} else {
+							uni.showToast({
+								title: data.msg,
+								icon: 'none'
+							});
+						}
+			
+		},
 		onClickItem(index) {
 			if (this.current !== index.currentIndex) {
 				this.current = index.currentIndex;
 			}
+			console.log(this.listData.class1.length)
+			console.log(this.listData.class2.length)
+				if(this.listData.class1.length<=0||this.listData.class2.length<=0){
+					this.selectGoods()
+				}
+			
+			
+			
 		},
-		upload() {
+		upload(id) {
+			
 			uni.navigateTo({
-				url:'../uploadGoods/uploadGoods'
+				url:'../uploadGoods/uploadGoods?id='+id
 			})
 		}
 	}
@@ -98,7 +183,7 @@ page {
 		.colle-left {
 			width: 188upx;
 			height: 188upx;
-			margin: 40upx 15upx 50upx 35upx;
+			margin: 40upx 0upx 50upx 30upx;
 			position: relative;
 		}
 		.cl-t {

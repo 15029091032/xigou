@@ -2,17 +2,24 @@
 	"pages": [{
 			"path": "pages/index/index",
 			"style": {
-				// #ifdef MP 
-				"navigationBarTitleText": "玺购商城",
-				//"navigationStyle": "custom",
-				// #endif 
+				"navigationBarTitleText": "分类",
 				"navigationStyle": "custom",
-
-				"enablePullDownRefresh": true,
 				"app-plus": {
 					"titleNView": false
 				}
 			}
+			// "style": {
+			// 	// #ifdef MP 
+			// 	"navigationBarTitleText": "玺购商城",
+			// 	//"navigationStyle": "custom",
+			// 	// #endif 
+			// 	"navigationStyle": "custom",
+
+			// 	"enablePullDownRefresh": true,
+			// 	"app-plus": {
+			// 		"titleNView": false
+			// 	}
+			// }
 		},
 		{
 			"path": "pages/product/product",
@@ -40,11 +47,25 @@
 		}, {
 			"path": "pages/cart/cart",
 			"style": {
-				"navigationBarTitleText": "购物车",
+				"navigationBarTitleText": "",
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
-						"type": "default" //透明渐变导航栏 App-nvue 2.4.4+ 支持
+						"titlecolor": "#666666",
+						"buttons": [ //原生标题栏按钮配置,
+							{
+								"type": "none",
+								"text": "管理",
+								"float": "right",
+								"fontSize": "15px"
+							},{
+								"type": "none",
+								"text": "购物车",
+								"float": "left",
+								"fontSize": "15px",
+								"width":"60px"
+							} 
+						]
 					}
 				}
 			}
@@ -184,7 +205,7 @@
 						"buttons": [ //原生标题栏按钮配置,
 							{
 								"type": "none",
-								"text": "确定&nbsp&nbsp",
+								"text": "确定",
 								"float": "right",
 								"fontSize": "30upx"
 							}
@@ -209,7 +230,7 @@
 						"buttons": [ //原生标题栏按钮配置,
 							{
 								"type": "none",
-								"text": "确定&nbsp&nbsp",
+								"text": "确定",
 								"float": "right",
 								"fontSize": "30upx"
 							}
@@ -230,7 +251,7 @@
 						"buttons": [ //原生标题栏按钮配置,
 							{
 								"type": "none",
-								"text": "确定&nbsp&nbsp",
+								"text": "确定",
 								"float": "right",
 								"fontSize": "30upx"
 							}
@@ -255,7 +276,7 @@
 						"buttons": [ //原生标题栏按钮配置,
 							{
 								"type": "none",
-								"text": "完成&nbsp&nbsp",
+								"text": "完成",
 								"float": "right",
 								"fontSize": "30upx"
 							}
@@ -296,7 +317,7 @@
 						"buttons": [ //原生标题栏按钮配置,
 							{
 								"type": "none",
-								"text": "保存&nbsp&nbsp",
+								"text": "保存",
 								"float": "right",
 								"fontSize": "30upx"
 							}
@@ -374,7 +395,7 @@
 						"buttons": [ //原生标题栏按钮配置,
 							{
 								"type": "none",
-								"text": "排序&nbsp&nbsp",
+								"text": "排序",
 								"float": "right",
 								"fontSize": "30upx"
 							}
@@ -469,10 +490,16 @@
 				"navigationBarTitleText": "所在地"
 			}
 		}
-	],
+        ,{
+            "path" : "pages/user/enterprisesInto/qiYeRuZhu",
+            "style" : {
+				"navigationBarTitleText": "企业入驻"
+			}
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
+		"navigationBarTitleText": "玺购",
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#f8f8f8"
 	},

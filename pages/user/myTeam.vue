@@ -3,25 +3,26 @@
 		<view class="header">
 			<view class="user-info">
 				<view class="left">
-					<view class="name">Ethwe:Y</view>
-					<view class="link">
+					<view class="name">{{userDetail.nickname}}</view>
+					<!-- <view class="link">
 						企业入驻
 						<text class="yticon icon-you"></text>
-					</view>
+					</view> -->
+					<view class="link" @click="linkEnte" >{{userDetail.type==1?'企业入驻':'已入驻'}} <text class="yticon icon-you"></text></view>
 				</view>
-				<image class="avatar" src="/static/avatar.png" mode=""></image>
+				<!-- <image class="avatar" src="/static/avatar.png" mode=""></image> -->
 			</view>
 			<view class="num-wrapper">
 				<view class="left">
-					<view class="num">0.00</view>
+					<view class="num">{{userDetail.umoney}}</view>
 					<view class="txt">账户余额</view>
 				</view>
 				<view class="right">
-					<view class="link">
+					<view class="link" @click="goselectDet(userDetail.umoney)">
 						查看详情
 						<text class="yticon icon-you"></text>
 					</view>
-					<view class="btn">
+					<view class="btn" @click="goWithDraw(userDetail.umoney)">
 						<image src="/static/icon-003.png" mode=""></image>
 						<text>提现</text>
 					</view>
@@ -32,7 +33,10 @@
 			<view class="title">团队成员</view>
 			<view class="scroll-box">
 				<scroll-view scroll-y="true" style="height: 100%;">
-					<block v-for="(item,index) in list" :key="index">
+					 <view class="empty_bg">
+						 <image src="../../static/temp/wu1.png" class="img"  v-if="list.length==0" ></image>
+					 </view>
+					<block v-for="(item,index) in list" :key="index" v-if="list.length>0">
 						<view class="item">
 							<image src="../../static/avatar.png" mode=""></image>
 							<text>{{item.name}}</text>
@@ -45,53 +49,86 @@
 </template>
 
 <script>
+		import { selecttTeamByUserid,selectAppUserByUserid } from '../../api/user.js';
 	export default{
 		data(){
 			return {
-				list:[
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					},
-					{
-						name:'昵称'
-					}
-				]
+				list:[],
+				userDetail:{},
+			}
+		},
+		onLoad(){
+			this.getUserInfo()
+			this.teamList();
+		},
+		methods:{
+			linkEnte(){
+				
+				//跳转企业入驻
+				uni.navigateTo({
+					url:'enterprisesInto/qiYeRuZhu',
+				})
+				
+			},
+			goWithDraw(money) {
+				uni.navigateTo({
+					url: `./withdraw/withdraw?money=${money}`,
+				})
+			},
+			goselectDet(money){
+			
+				uni.navigateTo({
+					url:`drawDetail/drawDetail?money=${money}`,
+				})
+			},
+			async getUserInfo(){
+				let that=this;
+				 
+				let data= await selectAppUserByUserid({userid:uni.getStorageSync('dataInfo').id})
+				
+				console.log("userInfo",data)
+				if (data.status == 200) {
+					that.userDetail=data.data;
+				} else {
+					uni.showToast({
+						title: data.msg,
+						icon: 'none'
+					});
+				}
+				
+				
+			},
+			async teamList(){
+				let that=this;
+				let data=await selecttTeamByUserid({userid :uni.getStorageSync("userInfo").id,page:1,rows:1});
+				if (data.status == 200) {
+					that.list=data.data;
+					
+				
+				} else {
+					uni.showToast({
+						title: data.msg,
+						icon: 'none'
+					});
+				}
 			}
 		}
 	}
 </script>
 
 <style lang="stylus">
+	
+	
+	.empty_bg{
+		width: 100%;
+		    text-align: center;
+			.img{
+				width:50%;
+				    margin-top: 10%;
+				    height: 300upx;
+			}
+	}
+	
 page
 	width 100%
 	height 100%
@@ -114,10 +151,11 @@ page
 				font-size 34upx
 				color #222
 			.link
-				display flex
-				align-items center
-				width 130upx
-				height 40upx
+				
+				width: fit-content
+				padding: 15upx 24upx 15upx 24upx
+				
+				
 				margin-top 10upx
 				font-size 22upx
 				background rgba(255, 226, 0, 1)

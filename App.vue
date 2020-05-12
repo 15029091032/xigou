@@ -6,31 +6,38 @@
 		mapMutations
 	} from 'vuex';
 	export default {
-		globalData:{
-				AMAP_KEY: '883ffe9c8e3789af8dfd36406016afea',
+		// globalData:{
+		// 		AMAP_KEY: '883ffe9c8e3789af8dfd36406016afea',
 			
-		},
+		// },
 		methods: {
 			...mapMutations(['login'])
 		},
 		onLaunch: function() {
-			let userInfo = uni.getStorageSync('userInfo') || '';
-			if(userInfo.id){
+
+			let dataInfo = uni.getStorageSync('dataInfo') || '';
+			
+			
+			console.log("app.vue初始化进来查看用户信息：",dataInfo)
+			if(dataInfo.id){
 				//更新登陆状态
+	
 				uni.getStorage({
-					key: 'userInfo',
+					"key": 'dataInfo',
 					success: (res) => {
-						this.login(res.data);
+								
+						
+						   this.login(res.data);
 					}
 				});
 			}
 			
 		},
 		onShow: function() {
-			console.log('App Show')
+			// console.log('App Show')
 		},
 		onHide: function() {
-			console.log('App Hide')
+			// console.log('App Hide')
 		},
 	}
 </script>

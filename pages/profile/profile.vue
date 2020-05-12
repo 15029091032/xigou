@@ -8,8 +8,8 @@
 			</view>
 			<uni-popup ref="popup" type="bottom" class="popus">
 				<view class="see">
-					<button type="default" plain class="btn" @click="upheadImg('album')">拍照上传</button>
-					<button type="default" plain class="btn" @click="upheadImg('camera')">本地上传</button>
+					<button type="default" plain class="btn" @click="upheadImg('camera')">拍照上传</button>
+					<button type="default" plain class="btn" @click="upheadImg('album')">本地上传</button>
 				</view>
 				<view class="rest">
 					<button type="default" plain class="btn" @click="close()">取消</button>

@@ -53,4 +53,25 @@ export function getContactInfo(data) {
     },{...data})
 }
 
+/**
+ * @param {data} 消息列表
+ */
+// export function selectMessgeList(data) {
+//   return http.httpRequest({
+//     url: 'index/selectMessgeList',
+//     method:'post',
+//     },{...data})
+// }
+
+
+export function selectMessgeList(data) {
+	return http.httpTokenRequest({
+		url: 'shop/selectMessgeList',
+		method: 'post',
+	},{...data})
+}
+
+
+
+
 
