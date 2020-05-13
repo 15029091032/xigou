@@ -92,7 +92,7 @@ export default {
 			       
 					 const tempFilePaths = res.tempFilePaths;
 					uni.uploadFile({
-					            url: base.baseUrl+'user/upload', //仅为示例，非真实的接口地址
+					            url: base.baseUrl+'user/upload', 
 					            filePath: tempFilePaths[0],
 					            name: 'file',
 					            success: (data) => {

@@ -48,6 +48,15 @@ export function selectShopByID(data) {
 		method: 'post',
 	},{...data})
 }
+/**
+ * @param {data}  企业 商品自荐/店铺每日爆品/店铺商品
+ */
+export function updateShopByUserid(data) {
+	return http.httpTokenRequest({
+		url: '/shop/updateShopByUserid',
+		method: 'post',
+	},{...data})
+}
 
 /**
  * @param {data}  企业 商品自荐/店铺每日爆品/店铺商品
@@ -58,5 +67,16 @@ export function selectShopListByUserid(data) {
 		method: 'post',
 	},{...data})
 }
+
+/**
+ * @param {data}  店铺修改
+ */
+export function updateStore(data) {
+	return http.httpTokenRequest({
+		url: '/user/updateStore',
+		method: 'post',
+	},{...data})
+}
+
 
 

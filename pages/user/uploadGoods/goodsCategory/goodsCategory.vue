@@ -112,16 +112,27 @@ export default {
 								that.items[2].name=item.name;
 								that.items[2].id=item.id;	
 				 
-					let pages = getCurrentPages();             //获取所有页面栈实例列表
-				 	let nowPage = pages[ pages.length - 1];    //当前页页面实例
-					console.log("nowPage",nowPage)
-				 	let prevPage = pages[ pages.length - 2 ];  //上一页页面实例
-					console.log("prevPage",prevPage)
-				 	prevPage.ooa =that.items ;         //修改上一页data里面的couponNumber参数值为value
+				 console.log("item",JSON.stringify((that.items)))
+					
+					try{
+						let pages = getCurrentPages();             //获取所有页面栈实例列表
+						console.log(pages.length)
+						let count=parseInt(pages.length)-1;
+						let nowPage = pages[count];    //当前页页面实例
+										
+						console.log(pages.length )
+						let prevPage = pages[ pages.length - 2 ];  //上一页页面实例
+										
+						prevPage.ooa =that.items ;         //修改上一页data里面的couponNumber参数值为value
+						
+						uni.navigateBack({                         //uni.navigateTo跳转的返回，默认1为返回上一级
+						    delta: 1
+						});
+					}catch(e){
+						//TODO handle the exception
+					}
 				
-				 	uni.navigateBack({                         //uni.navigateTo跳转的返回，默认1为返回上一级
-				 	    delta: 1
-				 	});
+				
 				 
 			
 			

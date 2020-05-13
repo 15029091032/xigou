@@ -2,17 +2,15 @@
 	<view class="content status_bar-1">
 		<view class="f6-bg">
 			<view class="header">
-				<text>分类</text>
-				<!-- <view class="search-bar">
-					<image src="/static/sou.png" mode="" @click="togo()" ></image>
-					请输入想要的商品
-				</view> -->
+				<text v-if="loadingType == 2">{{address.area}}</text>
+				<text v-if="loadingType == 1">分类</text>
 				<view class="search-bar" @click="search()">
 					<image src="/static/sou.png" mode=""></image>
 					请输入想要的商品
 				</view>
 				<view class="btns">
-					<image @click="isStore = false" src="../../static/icon-001.png" mode=""></image>
+					<image v-if="loadingType == 2" src="/static/msg.png"  mode="" @click="goNotice()"></image>
+					<image v-if="loadingType == 1" @click="isStore = !isStore" src="../../static/icon-001.png" mode=""></image>
 				</view>
 			</view>
 			<view class="con-wrapper">
@@ -47,6 +45,7 @@
 </template>
 
 <script>
+	import {getaddress,empty_b} from '../../public/base.js'
 	import { getFristTypeList , getSristTypeList} from '../../api/home.js';
 	export default {
 		data() {
@@ -59,11 +58,45 @@
 				tlist: [],
 				Arrlist: [],
 				isStore:true,
+				loadingType: 2, //1是企业  2是个人
+				address:{
+					province: "获取中",
+					city: "获取中",
+					area: "获取中"
+				}
 			}
 		},
 		onLoad(e){
-			// this.loadData();
-			console.log('---====',e)
+		  let that=this;
+			
+			
+			try{
+				that.loadingType= uni.getStorageSync('loadingType');
+				
+				if(!empty_b(that.loadingType)){
+					
+					that.loadingType = 2;
+				}
+			}catch(e){
+				
+				that.loadingType = 2;
+			}
+			if(that.loadingType==2){
+				try{
+					
+					let obj=uni.getStorageSync('address')
+					
+					if(!empty_b(obj)){
+						that.getadd()
+					}else{
+						that.address=obj;
+					}
+				}catch(e){
+					that.getadd()
+				}
+			}
+		// 	// this.loadData();
+		// 	console.log('---====',e)
 		
 		},
 		onHide() {
@@ -94,6 +127,26 @@
 			// console.log(goodItem)
 		 //  },
 		methods: {
+			goNotice() {
+				uni.navigateTo({
+					url: '../user/myNotice/myNotice'
+				});
+			},
+			getadd(){
+				let that=this;
+				getaddress(function(data){
+					
+				let obj = {
+					province: data.address.province,
+					city: data.address.city,
+					area: data.address.district
+				};
+				uni.setStorageSync('address', obj);
+				that.address=obj;
+					
+				})
+				
+			},
 			async gFristTypeList() {
 				let that=this;
 				const data = await getFristTypeList({
@@ -130,14 +183,19 @@
 			// },
 			//一级分类点击
 			tabtap(item){
-				// console.log(item)
-				if(!this.sizeCalcState){
+				 console.log(item)
+				if(!this.sizeCalcState){ 
 					this.calcSize();
 				}
 				this.gSristTypeList(item.id)
 				this.currentId = item.id;
 				let index = this.slist.findIndex(sitem=>sitem.pid === item.id);
-				this.tabScrollTop = this.slist[index].top;
+				console.log(index)
+				try{
+					this.tabScrollTop = this.slist[1].top;	
+				}catch(e){
+					//TODO handle the exception
+				}
 			},
 			//右侧栏滚动
 			asideScroll(e){

@@ -14,42 +14,111 @@
 		</view>
 		<view class="upph">
 			<text class="upph-t">店铺图像</text>
-			<sunui-upimg @change="getImageInfo4" :upload_auto="true" ref="upimg4" :upimg_preview="serviceArr"></sunui-upimg>
+			<image   @click="open()"  class="headImg" src="../../../static/up.png"></image>
+			<!-- <sunui-upimg @change="getImageInfo4" :upload_auto="true" ref="upimg4" :upimg_preview="serviceArr"></sunui-upimg> -->
 		</view>
+		<uni-popup ref="popup" type="bottom" class="popus">
+			<view class="see">
+				<button type="default" plain class="btn" @click="upheadImg('camera')">拍照上传</button>
+				<button type="default" plain class="btn" @click="upheadImg('album')">本地上传</button>
+			</view>
+			<view class="rest">
+				<button type="default" plain class="btn" @click="close()">取消</button>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
-	import sunUiUpimg from '@/components/sunui-upimg/sunui-upimg.vue';
+	import uniPopup from '@/components/uni-popup/uni-popup.vue';
+	import base from '../../../api/request/index.js';
+	import { updateStore } from '../../../api/goods.js';
 	export default {
 		data() {
 			return {
 				setype: false,
 				serviceArr:[],
 				value: '111',
+				shopHeadImg:'',
 			}
 		},
+			components: { uniPopup },
 		onLoad() {
-			// 数据更新不及时时可以在下次DOM更新时使用
-			this.$nextTick(function(){
-				this.getInfo();
-			})
-			// this.getInfo();
+		
 		},
 		methods: {
-			async getInfo() {
-				await uni.request({
-					url: 'http://www.pbdpw.com/info.php',
-					method: 'GET',
-					data: {},
-					success: res => {
-						if (res.data.status == 'ok') {
-							this.serviceArr = res.data.data;
-							console.log('服务器返回值：', JSON.stringify(res.data.data))
-						}
-					}
-				});
+			open() {
+				this.$refs.popup.open();
 			},
+			close() {
+				this.$refs.popup.close();
+			},
+	
+			upheadImg(type){
+				let that=this;
+				//that.close()
+				uni.chooseImage({
+				    count: 1, //默认9
+				    sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
+				    sourceType: [type], //从相册选择
+				    success: function (res) {
+				       
+						 const tempFilePaths = res.tempFilePaths;
+						uni.uploadFile({
+						            url: base.baseUrl+'user/upload', 
+						            filePath: tempFilePaths[0],
+						            name: 'file',
+						            success: (data) => {
+										console.log(data.statusCode)
+										if(data.statusCode==200){
+											
+											this.shopHeadImg=JSON.parse(data.data).data
+										
+										}else{
+											uni.showToast({
+												title: data.msg,
+												icon: 'none'
+											});
+										}
+						                
+						            }
+						        });
+				    },
+					})
+						
+			},
+			async	updateShop(url){
+					 let that=this;
+					 let d={
+						
+						 userid:uni.getStorageSync('dataInfo').id,
+						 head_img:that.shopHeadImg,
+						 store_name:that.store_name,
+						 store_type_id:that.store_type_id,
+						 store_typ_name :that.store_typ_name,
+						 }
+					 
+					 let data= await updateStore(d)
+					 
+					 if(data.status==200){
+						 
+						 uni.showToast({
+						 	title: data.msg,
+						 	icon: 'none'
+						 });
+						 
+						 setTimeout(()=>{
+						 	that.getUserInfo()
+						 }, 800)
+						
+					 }else{
+						 uni.showToast({
+						 	title: data.msg,
+						 	icon: 'none'
+						 });
+					 }
+						
+					},
 			getImageInfo4(e) {
 				console.log('图片返回4：', e)
 			},
@@ -123,7 +192,7 @@ page {
 }
 	.upph {
 		width: 100%;
-		height: 290upx;
+		height: 400upx;
 		background-color: #fff;
 		margin-top: 10upx;
 		padding-top: 10upx;
@@ -138,4 +207,27 @@ page {
 		color: #333;
 		margin-left: 40upx;
 	}
+	.headImg{
+		width: 200upx;
+		    height: 200upx;
+		    display: flex;
+		    margin: 40upx;
+	}
+
+.popus {
+	.rest,
+	.see {
+		background-color: #fff;
+		padding: 0 30upx;
+		border: none;
+		font-size: 32upx;
+		color: #333;
+	}
+	.rest {
+		margin-top: 20upx;
+	}
+	.btn {
+		border: none;
+	}
+}
 </style>

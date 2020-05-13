@@ -114,7 +114,7 @@
 				this.toggleMask();
 			},
 		}
-	}
+  	}
 </script>
 
 <style lang='scss'>

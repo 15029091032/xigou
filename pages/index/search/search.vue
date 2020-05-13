@@ -1,5 +1,20 @@
 <template>
-	<view class="fixd-head">
+
+				
+	<view class="container  status_bar-1">
+			<view class="f6-bg">
+		<view class="header">
+			<image class="back" src="../../../static/home/WechatIMG5.png" @click="goback()"></image>
+			
+			<view class="search-bar" >
+				<input   v-model="searchValue"  placeholder="请输入想要的商品"   @confirm="search()"   />
+			</view>
+			<view class="btns" @click="clean()">
+					<view class="rest">取消</view>
+			</view>
+		</view>			
+				
+<!-- 	<view class="header">
 		<image class="back" src="../../../static/home/WechatIMG5.png" @click="goback()"></image>
 		<view class="search-bar" >
 			<image src="/static/sou.png" ></image>
@@ -7,7 +22,9 @@
 			<input   v-model="searchValue"  placeholder="请输入想要的商品"   @confirm="search()"   />
 		</view>
 		<view class="rest">取消</view>
+	</view> -->
 	</view>
+		</view>
 </template>
 
 <script>
@@ -30,6 +47,9 @@
 			// console.log("address:",uni.getStorageSync('address'))
 		},
 		methods: {
+			clean(){
+				this.searchValue="";
+			},
 			async search() {
 				uni.navigateTo({
 					url: `/pages/product/lists/lists?id=1&search=${this.searchValue}`
@@ -76,41 +96,50 @@
 </script>
 
 <style lang="scss" scoped>
-.fixd-head {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	z-index: 100;
-	position: fixed;
-	left: 0;
-	top: 0;
-	width: 100%;
-	margin-top: 4.12%;
-	.back {
-		width: 28upx;
-		height: 54upx;
-		margin-left: 3.07%;
-	}
-	.search-bar {
+
+
+.header{
 		display: flex;
+		justify-content: space-between;
 		align-items: center;
-		width: 76.53%;
-		height: 60upx;
-		padding-left: 20upx;
-		background-color: #f6f6f6;
-		font-size: $font-sm;
-		color: #999;
-		border-radius: 28upx;
-		image {
-			width: 42upx;
-			height: 42upx;
-			margin-right: 10upx;
+		background-color: #fff;
+		padding: 20upx;
+		text{
+			font-size: 36upx;
+			color: #333333;
+		}
+		.icon_btoom{
+			    width: 16upx;
+			    height: 16upx
+		}
+		.addr_sty{display: flex;
+    align-items: center;font-size: 30upx;
+	    overflow: hidden;
+	    width: 100upx;
+	    white-space: nowrap;}
+		.search-bar{
+			display: flex;
+			align-items: center;
+			width:540upx;
+			height: 60upx;
+			padding-left: 20upx;
+			background-color: #F6F6F6;
+			border-radius:28upx;
+			font-size: $font-sm;
+			color: #999999;
+			image{
+				width: 42upx;
+				height: 42upx;
+				margin-right: 10upx;
+			}
+		}
+		.btns .rest{
+			font-size: 30upx;
 		}
 	}
-	.rest {
-		font-size: 32upx;
-		color: #333;
-		margin-right: 20upx;
+	.back{
+		width: 50upx;
+		    height: 60upx;
+		
 	}
-}
 </style>

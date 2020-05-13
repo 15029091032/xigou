@@ -137,7 +137,7 @@
 	}
 </script>
 
-<style lang='scss' s>
+<style lang='scss'>
 	page{
 		min-height: 100%;
 		background-color: #fff;

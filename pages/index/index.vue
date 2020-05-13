@@ -1,5 +1,6 @@
 <template>
-	<view class="container">
+	<view class="container  status_bar-1">
+			<view class="f6-bg">
 		<view class="header">
 			<view class="addr_sty"  v-if="loadingType == 2" @click="sCity()">{{address.area}}<image src="../../static/home/down.png" class="icon_btoom"></image></view>
 			<!-- <view class="search-bar">
@@ -144,6 +145,7 @@
 			</view>
 		</view>
 		<uni-load-more :status="loadMore"></uni-load-more>
+		</view>
 	</view>
 </template>
 
@@ -164,11 +166,11 @@ export default {
 				{
 					name: '最新商品',
 					isSelected: false
-				}
+				} 
 			],
 			address: {},
 			current: 0,
-			loadingType: 2, //1个人入口首页  2企业入口首页
+			loadingType: 2, //1个企业  2企业个人
 			swiperCurrent: 0,
 			swiperLength: 0,
 			shufflingInfoList: [], // 首页轮播
@@ -197,28 +199,30 @@ export default {
 			uni.setStorageSync('address', obj);
 		} catch (e) {
 			// error
-		}
-		console.log(1)
-		let that = this;
-		uni.getLocation({
-			type: 'wgs84',
-			success: function(res) {
+		}	
+	
+		// let that = this;
+		// uni.getLocation({
+		// 	type: 'wgs84',
+		// 	success: function(res) {
 				
-				console.log('当前位置的经度：', res);
-				console.log('当前位置的经度：' + res.longitude);
-				console.log('当前位置的纬度：' + res.latitude);
+		// 		console.log('当前位置的经度：', res);
+		// 		console.log('当前位置的经度：' + res.longitude);
+		// 		console.log('当前位置的纬度：' + res.latitude);
 				
-				Promise.all([this.gSelectHome(), this.gSelect()]);
-				//that.getLocationAddr(res.longitude, res.latitude);
-			}
-		});
+		// 		Promise.all([this.gSelectHome(), this.gSelect()]);
+		// 		that.getLocationAddr(res.longitude, res.latitude);
+		// 	}
+		// });
+		//Promise.all([this.gSelectHome(), this.gSelect()]);
 	},
 	onShow() {
-		console.log(2)
+
 		let add = uni.getStorageSync('address');
 		if (add) {
 			this.address = add;
 		}
+	
 		try {
 			let d = uni.getStorageSync('loadingType');
 			if (d) {
@@ -239,6 +243,7 @@ export default {
 		Promise.all([this.gSelectHome(), this.gSelect()]);
 	},
 	onPullDownRefresh() {
+		
 		this.pageSize = 1;
 		this.proList = [];
 		Promise.all([this.gSelectHome(), this.gSelect()]).then(res => {
@@ -292,7 +297,6 @@ export default {
 		gocate(item) {
 			// 商品分类
 			let id = item.id;
-			console.log(item)
 			try {
 			    uni.setStorageSync('tabId', id);
 			} catch (e) {
@@ -370,9 +374,9 @@ export default {
 		// },
 		//轮播图切换修改背景色
 		swiperChange(e) {
-			const index = e.detail.current;
-			this.swiperCurrent = index;
-			this.titleNViewBackground = this.carouselList[index].background;
+			// const index = e.detail.current;
+			// this.swiperCurrent = index;
+			// this.titleNViewBackground = this.carouselList[index].background;
 		},
 
 		async gSelectHome() {
@@ -382,7 +386,7 @@ export default {
 				area: this.address.area, //区
 				type: this.loadingType //1个人入口首页  2企业入口首页
 			});
-			console.log('====');
+			
 			this.shufflingInfoList = data.data.shufflingInfoList;
 			this.shopInfoList = data.data.shopInfoList;
 			this.shopTypeList = data.data.shopTypeList;
@@ -529,7 +533,7 @@ page {
 .carousel-section {
 	position: relative;
 	padding-top: 10px;
-	margin-top: 100upx;
+	// margin-top: 100upx;
 	.titleNview-placing {
 		height: var(--status-bar-height);
 		padding-top: 44px;
@@ -1188,7 +1192,7 @@ page {
 		}
 		.btns image{
 			width: 44upx;
-			margin-right: 20upx;
+			margin: 10upx;
 		
 			height: 40upx;
 		}

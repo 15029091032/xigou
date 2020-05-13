@@ -33,6 +33,15 @@ export function empty_b(param){
 	 
 	     return param
 }
+export function getaddress(success){
+	uni.getLocation({
+			type: 'wgs84',
+			geocode:true,
+			success: function(res) {
+				success(res)
+			}
+		});
+}
 //手机号码
 // export function empty_b(phone){
 // 	  if (phone.substring(0,1) == 1) {

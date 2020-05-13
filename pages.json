@@ -1,25 +1,15 @@
 {
-	"pages": [{
+	"pages": [
+	
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "分类",
 				"navigationStyle": "custom",
 				"app-plus": {
-					"titleNView": false
+					"titleNView": "false"
 				}
 			}
-			// "style": {
-			// 	// #ifdef MP 
-			// 	"navigationBarTitleText": "玺购商城",
-			// 	//"navigationStyle": "custom",
-			// 	// #endif 
-			// 	"navigationStyle": "custom",
-
-			// 	"enablePullDownRefresh": true,
-			// 	"app-plus": {
-			// 		"titleNView": false
-			// 	}
-			// }
 		},
 		{
 			"path": "pages/product/product",
@@ -411,12 +401,28 @@
 		}, {
 			"path": "pages/user/goodsManage/goodsManage",
 			"style": {
-				"navigationBarTitleText": "商品管理"
+				"navigationBarTitleText": "商品管理",
+				"titleNView": {
+					"titlecolor": "#666666",
+					"buttons": [ //原生标题栏按钮配置,
+						{
+							"type": "none",
+							"text": "上传",
+							"float": "right",
+							"fontSize": "15px"
+						}
+					]
+				}
 			}
 		}, {
 			"path": "pages/user/uploadGoods/uploadGoods",
 			"style": {
 				"navigationBarTitleText": "上传商品"
+			}
+		}, {
+			"path": "pages/user/uploadGoods/editGoods",
+			"style": {
+				"navigationBarTitleText": "编辑商品"
 			}
 		}, {
 			"path": "pages/user/uploadGoods/goodsCategory/goodsCategory",
@@ -494,6 +500,12 @@
             "path" : "pages/user/enterprisesInto/qiYeRuZhu",
             "style" : {
 				"navigationBarTitleText": "企业入驻"
+			}
+        }
+        ,{
+            "path" : "pages/shop/shop",
+            "style" : {
+				
 			}
         }
     ],

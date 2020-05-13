@@ -61,10 +61,10 @@
 
 		<!-- 底部操作菜单 -->
 		<view class="page-bottom">
-			<navigator url="/pages/index/index" open-type="switchTab" class="p-b-btn">
+			<view  open-type="switchTab" class="p-b-btn" @click="shopLink()">
 				<text class="yticon icon-xiatubiao--copy"></text>
-				<text>店铺</text>
-			</navigator>
+				<text>店铺</text> 
+			</view>
 			<navigator url="/pages/cart/cart" open-type="switchTab" class="p-b-btn">
 				<text class="yticon icon-gouwuche"></text>
 				<text>客服</text>
@@ -75,6 +75,7 @@
 			</view>
 
 			<view class="action-btn-group">
+				
 				<button type="black" style="background-color: #FFF55C;margin: 0;flex: 1;" class=" action-btn no-border add-cart-btn" @click="toggleSpec(2)">加入购物车</button>
 				<button type="black" style="background-color: #FFE200;margin: 0;flex: 1;" class=" action-btn no-border buy-now-btn" @click="toggleSpec(3)">立即购买</button>
 			</view>
@@ -100,11 +101,7 @@
 				<view  class="item-right">
 					 
 					<text class="r-tl">数量</text>
-					<uni-number-box
-										class="r-tr"
-											:min="1"
-											:max="9"	
-										></uni-number-box>
+					<uni-number-box	class="r-tr"	:min="1"	:max="9"	></uni-number-box>
 				</view>
 				<!-- <view v-for="(item,index) in specList" :key="index" class="attr-list">
 					<text>规格</text>
@@ -121,24 +118,23 @@
 					</view>
 				</view> -->
 				<button class="btn" @click="toggleSpec(5)">完成</button>
+				
 			</view>
 			
 		</view>
-		<!-- 分享 -->
-		<share ref="share" :contentHeight="580" :shareList="shareList"></share>
+		
 	</view>
-</template>
-
-<script>
+</template> 
+ 
+<script> 
 import uniNumberBox from "@/components/uni-number-box.vue"
-import share from '@/components/share';
 import { sureConlectShopsByUserid,addOrderShop } from '../../api/cart.js';
 import { selectShopByid } from '../../api/home.js';
-
+// import uniPopup from '@/components/uni-popup/uni-popup-share.vue'
 
 export default {
 	components: {
-		share,
+		// uniPopup,
 		uniNumberBox
 	},
 	data() {
@@ -196,29 +192,10 @@ export default {
 		     that.number= data.number;
 			
 		 })
-		that.shareList = await that.$api.json('shareList');
 		
 	
 	},
-	// async onLoad(options){
-	// 	//接收传值,id里面放的是标题，因为测试数据并没写id
-	// 	// let id = options.id;
-	// 	// if(id){
-	// 	// 	this.$api.msg(`点击了${id}`);
-	// 	// }
 
-	// 	//规格 默认选中第一条
-	// 	this.specList.forEach(item=>{
-	// 		for(let cItem of this.specChildList){
-	// 			if(cItem.pid === item.id){
-	// 				this.$set(cItem, 'selected', true);
-	// 				this.specSelected.push(cItem);
-	// 				break; //forEach不能使用break
-	// 			}
-	// 		}
-	// 	})
-	// 	this.shareList = await this.$api.json('shareList');
-	// },
 	methods: {
 	
 		//规格弹窗开关
@@ -312,7 +289,7 @@ export default {
 		},
 		//分享
 		share() {
-			this.$refs.share.toggleMask();
+			 // this.$refs.popup.open()
 		},
 		async addshopCar(){
 			let that=this;
@@ -360,6 +337,12 @@ export default {
 				});
 			}
 			
+		},
+		shopLink(){
+			 
+			uni.navigateTo({
+				url: '../shop/shop?id='+this.dataDetail.userid
+			});
 		},
 		choiceSku(id,price,skuName){
 			this.skuid=id;
@@ -931,11 +914,11 @@ page {
 		}
 	}
 }
-.c_img{
-	width: 100%;
-	// height: auto;
+// .c_img{
+// 	width: 100%;
+// 	// height: auto;
 	
-}
+// }
 // .uni-image{
 // 	img{	
 // 		    position: initial;opacity: 0;

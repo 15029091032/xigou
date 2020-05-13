@@ -5,6 +5,7 @@
 </template>
 
 <script>
+	import getFristTypeList from '../../../../api/home.js'
 	export default {
 		data() {
 			return {
@@ -19,9 +20,17 @@
 			}
 		},
 		onLoad(){
-
+			this.getType()
 		},
 		methods: {
+		 async getType(){
+				let that=this;
+				let data=await getFristTypeList({})
+				if(data.status==200){
+					 that.fenList=data.data
+					console.log(that.fenList)
+				}
+			},
 			selete(item) {
 				var pages = getCurrentPages();
 				var prepage = pages[pages.length - 2];

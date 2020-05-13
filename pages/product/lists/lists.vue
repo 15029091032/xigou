@@ -192,4 +192,6 @@ page {
 }
 	.noOrder{width: 100%;text-align: center;margin-top:45%;}
 	.noOrder>image{width: 40%;height: 260upx;}
+	.container{background-color: white;}
+	uni-page-body{background-color: white;}
 </style>

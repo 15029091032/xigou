@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<text class="upload" @click="upload()">上传</text>
+		
 		 <uni-segmented-control :current="(current)" :values="items" @clickItem="onClickItem" style-type="text" active-color="#FFE200"></uni-segmented-control>
 		        <view class="content">
 		            <view v-show="current === 0">
@@ -155,7 +155,15 @@ export default {
 		upload(id) {
 			
 			uni.navigateTo({
-				url:'../uploadGoods/uploadGoods?id='+id
+				url:'../uploadGoods/editGoods?id='+id
+			})
+		}
+	},
+	onNavigationBarButtonTap(e) {
+		// console.log(e.index)
+		if(e.index==0){
+			uni.navigateTo({
+				url:'../uploadGoods/uploadGoods'
 			})
 		}
 	}
@@ -192,25 +200,29 @@ page {
 			height: 65upx;
 		}
 		.colle-right {
-			margin: 30upx 15upx 88upx 15upx;
+			margin: 60upx 15upx 88upx 15upx;
 			display: flex;
 			justify-content: space-between;
 			flex-direction: column;
 			.crh {
+				
 				font-size: 28upx;
 				color: #666;
 			}
 			.crb {
+				line-height: 20px; 
 				font-size: 26upx;
 				color: #333;
 			}
 			.crf {
+				
 				display: flex;
 				justify-content: space-between;
 				.crf-l {
+					display: flex;
 					.c-v {
-						width: 38upx;
-						height: 22upx;
+						width: 50upx;
+						height: 50upx;
 					}
 					.prc {
 						font-size: 30upx;
