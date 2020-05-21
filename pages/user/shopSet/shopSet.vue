@@ -1,20 +1,20 @@
 <template>
 	<view class="container">
-		<text class="upload" v-if="this.setype == false" @click="preservation()">保存</text>
-		<text class="upload" v-if="this.setype == true" @click="edit()">编辑</text>
+		<!-- <text class="upload"  @click="preservation()">保存</text> -->
+<!-- 		<text class="upload" v-if="setype == true" @click="edit()">编辑</text> -->
 		<view class="list-cell b-b" hover-class="cell-hover" :hover-stay-time="50" @click="goset()">
 			<text class="cell-tit">所属分类</text>
-			<input :value="this.value" class="inp"/>
+			<input v-model="value.value" class="inp"/>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
 		<view class="list-cell b-b m-t"  hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">店铺名称</text>
-			<input class="uni-input" focus placeholder="请输入店铺名称"  style="font-size: 30upx;"/>
+			<input class="uni-input" focus placeholder="请输入店铺名称" v-model="store_name"  style="font-size: 30upx;"/>
 			<text class="cell-more yticon iconfont icon-icon--"></text>
 		</view>
 		<view class="upph">
 			<text class="upph-t">店铺图像</text>
-			<image   @click="open()"  class="headImg" src="../../../static/up.png"></image>
+			<image   @click="open()"  class="headImg" :src="shopHeadImg"></image>
 			<!-- <sunui-upimg @change="getImageInfo4" :upload_auto="true" ref="upimg4" :upimg_preview="serviceArr"></sunui-upimg> -->
 		</view>
 		<uni-popup ref="popup" type="bottom" class="popus">
@@ -33,20 +33,55 @@
 	import uniPopup from '@/components/uni-popup/uni-popup.vue';
 	import base from '../../../api/request/index.js';
 	import { updateStore } from '../../../api/goods.js';
+	import { selectAppUserByUserid } from '../../../api/user.js';
 	export default {
 		data() {
 			return {
 				setype: false,
 				serviceArr:[],
-				value: '111',
-				shopHeadImg:'',
+				value: {value:'请选择',id:0},
+				shopHeadImg:'../../../static/up.png',
+				store_name:"",
+				userDetail:"",
 			}
 		},
 			components: { uniPopup },
 		onLoad() {
-		
+			this.selectUser()
 		},
+		onNavigationBarButtonTap(e) {
+		       console.log(e);
+					var webView = this.$mp.page.$getAppWebview();  
+					console.log( this.isEdit)
+					  if(e.index==0){
+						
+							this.preservation()
+						 
+					  }
+		   },
 		methods: {
+		 async	selectUser(){
+				let that=this;
+				let d={userid:uni.getStorageSync('dataInfo').id}
+			    let data=await	selectAppUserByUserid(d)
+			 
+				
+			 if (data.status == 200) {
+			    uni.setStorageSync('dataInfo', data.data);
+			 	that.userDetail=data.data;
+				that.value.value=that.userDetail.storeTypName
+				that.value.id=that.userDetail.storeTypeId
+				console.log(that.value)
+				that.store_name=that.userDetail.storeName
+				that.shopHeadImg=that.userDetail.storeImg
+			 } else {
+			 	uni.showToast({
+			 		title: data.msg,
+			 		icon: 'none'
+			 	});
+			 }
+			 
+			},
 			open() {
 				this.$refs.popup.open();
 			},
@@ -71,8 +106,8 @@
 						            success: (data) => {
 										console.log(data.statusCode)
 										if(data.statusCode==200){
-											
-											this.shopHeadImg=JSON.parse(data.data).data
+											that.close()
+											that.shopHeadImg=JSON.parse(data.data).data
 										
 										}else{
 											uni.showToast({
@@ -87,28 +122,30 @@
 					})
 						
 			},
-			async	updateShop(url){
+			async	preservation(url){
 					 let that=this;
 					 let d={
 						
 						 userid:uni.getStorageSync('dataInfo').id,
-						 head_img:that.shopHeadImg,
+						 store_img:that.shopHeadImg,
 						 store_name:that.store_name,
-						 store_type_id:that.store_type_id,
-						 store_typ_name :that.store_typ_name,
+						 store_type_id:that.value.id,
+						 store_typ_name :that.value.value,
 						 }
 					 
+					 console.log(d)
+					
 					 let data= await updateStore(d)
 					 
 					 if(data.status==200){
-						 
+						 console.log(d)
 						 uni.showToast({
 						 	title: data.msg,
 						 	icon: 'none'
 						 });
-						 
+						 this.selectUser()
 						 setTimeout(()=>{
-						 	that.getUserInfo()
+						 	uni.navigateBack({})
 						 }, 800)
 						
 					 }else{

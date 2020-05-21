@@ -146,7 +146,7 @@
 		min-height: 100%;
 		padding-top: 10upx;
 		background-color: #f6f6f6;
-		padding-bottom: 150upx;
+		
 	}
 	.a-m {
 		width: 32upx;

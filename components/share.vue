@@ -37,7 +37,7 @@
 				transform: 'translateY(50vh)',
 				timer: 0,
 				backgroundColor: 'rgba(0,0,0,0)',
-				show: false,
+				show: true,
 				config: {},
 			};
 		},

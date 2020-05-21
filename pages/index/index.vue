@@ -153,6 +153,7 @@
 import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
 import uniSegmentedControl from '@/components/uni-segmented-control/uni-segmented-control.vue';
 import { getSelectHome, getSelect } from '../../api/home.js';
+	import {getaddress,empty_b} from '../../public/base.js'
 export default {
 	components: { uniLoadMore },
 	data() {
@@ -168,9 +169,9 @@ export default {
 					isSelected: false
 				} 
 			],
-			address: {},
+			address: {province: "陕西省", city: "西安市", area: "雁塔区"},
 			current: 0,
-			loadingType: 2, //1个企业  2企业个人
+			loadingType: 0, //1个企业  2企业个人
 			swiperCurrent: 0,
 			swiperLength: 0,
 			shufflingInfoList: [], // 首页轮播
@@ -189,32 +190,72 @@ export default {
 	},
 
 	onLoad() {
-		// this.loadData();
-		try {
-			let obj = {
-				province: '陕西省',
-				city: '西安市',
-				area: '雁塔区'
-			};
-			uni.setStorageSync('address', obj);
-		} catch (e) {
-			// error
-		}	
-	
-		// let that = this;
-		// uni.getLocation({
-		// 	type: 'wgs84',
-		// 	success: function(res) {
+		
+		let that=this;
+					
 				
-		// 		console.log('当前位置的经度：', res);
-		// 		console.log('当前位置的经度：' + res.longitude);
-		// 		console.log('当前位置的纬度：' + res.latitude);
+						
 				
-		// 		Promise.all([this.gSelectHome(), this.gSelect()]);
-		// 		that.getLocationAddr(res.longitude, res.latitude);
-		// 	}
-		// });
-		//Promise.all([this.gSelectHome(), this.gSelect()]);
+				// 		let obj={
+				// 			province: "陕西省",
+				// 			city: "西安市",
+				// 			area: "雁塔区"
+				// 		}
+				
+				// 		uni.setStorageSync('address', obj);
+					
+					try{
+						
+						 /**
+						  * 用户先进的首页 默认给个  loadingType 值是2代表个人，个人的话就去获取地址然后查询商品
+						  * loadingType是1的时候代表企业 企
+						  * */
+						that.loadingType= uni.getStorageSync('loadingType');
+						
+						if(!empty_b(that.loadingType)){
+							
+							that.loadingType = 2;
+						}
+					}catch(e){
+						
+						that.loadingType = 2;
+					}
+					if(that.loadingType==2){
+						try{
+							
+							let obj=uni.getStorageSync('address')
+							
+							if(!empty_b(obj)){
+								that.getadd()
+							}else{
+								that.address=obj;
+								Promise.all([this.gSelectHome(), this.gSelect()]);
+							}
+						}catch(e){
+							that.getadd()
+						}
+					}else{
+						
+						this.items = [
+							{
+								name: '最新商品',
+								isSelected: false
+							}
+						];
+						
+						let obj=uni.getStorageSync('address')
+						
+						if(!empty_b(obj)){
+							that.getadd()
+						}else{
+							that.address=obj;
+						
+								Promise.all([this.gSelectHome(), this.gSelect()]);
+						}
+					
+					}
+		
+
 	},
 	onShow() {
 
@@ -258,6 +299,25 @@ export default {
 		}
 	},
 	methods: {
+		getadd(){
+			
+			//个人才走这里
+			let that=this;
+			getaddress(function(data){
+				
+			let obj = {
+				province: data.address.province,
+				city: data.address.city,
+				area: data.address.district
+			};
+			uni.setStorageSync('address', obj);
+			that.address=obj;
+				Promise.all([that.gSelectHome(), that.gSelect()]);
+			},function(err){
+				that.getadd()
+			})
+			
+		},
 		scan(){
 			uni.scanCode({
 			    success: function (res) {
@@ -337,7 +397,7 @@ export default {
 			this[key][index].imgUrl = '../../static/temp/banner1.jpg';
 		},
 		onImageErrorc(key, index) {
-			console.log([key][index]);
+			// console.log([key][index]);
 			this[key][index].imgUrl = '../../static/001.png';
 		},
 		onImageErrorb(key, index) {

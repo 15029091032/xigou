@@ -58,7 +58,12 @@ const httpRequest = (opts, data) => {
 						reject(response)
 					}
 				} else {
-					reject(response)
+					uni.showToast({
+						title: res[0].errMsg,
+						icon: 'none',
+						mask:true
+					})
+					//reject(response)
 				}
 			}
 		).catch(
@@ -138,7 +143,13 @@ const httpTokenRequest = (opts, data) => {
 						});
 					}
 				} else {
-					reject(response)
+					console.log("res",res)
+					uni.showToast({
+						title: '请求失败',
+						icon: 'none',
+						mask:true
+					})
+					//reject(response)
 				}
 			}
 		).catch(

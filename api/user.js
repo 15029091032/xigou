@@ -276,3 +276,24 @@ export function selectOrdersByStatus(data) {
 	},{...data})
 }
 
+
+
+/**
+ * @param {data} 我卖出的
+ */
+export function updateStore(data) {
+	return http.httpTokenRequest({
+		url: 'user/updateStore',
+		method: 'post',
+	},{...data})
+}
+
+/**
+ * @param {data} 企业 自荐商品排序
+ */
+export function sortShopByUserid(data) {
+	return http.httpTokenRequest({
+		url: 'shop/sortShopByUserid',
+		method: 'post',
+	},{...data})
+}

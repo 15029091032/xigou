@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
 import { getselectShopListByShopType,getselectShopListBySearch } from '../../../api/home.js';
 export default {
 	data() {
@@ -29,9 +30,16 @@ export default {
 			proList: [],
 			loadingType:[],
 			noStatus:'display:none',
+			pageSize: 1,
+			pageRows: 10,
+			isLoadMore: false,
+			loadMore:'more', //	load
+			options:'',
 		};
 	},
+	components: { uniLoadMore },
 	onLoad(options) {
+		
 		try {
 			const res = uni.getStorageSync('loadingType');
 			// console.log("res========",res);
@@ -40,20 +48,39 @@ export default {
 			// error
 		}
 		//{province: "陕西省", city: "西安市", area: "雁塔区"}
-		
+			this.options=options;
 			//id值为1表示从搜索过来的
 			if(options.id==1){
 				
-				this.gListBySearch( this.loadingType, '1', '10', options.search);
+				this.gListBySearch( this.loadingType, this.pageSize, this.pageRows, options.search);
 			}else{
-		
-				this.gListByShopType( this.loadingType, '1', '10', options.tid);
+
+				this.gListByShopType( this.loadingType, this.pageSize, this.pageRows, options.tid);
 			}
 		
 		
 	},
+	onReachBottom() {
+	
+		
+		if (this.isLoadMore) {
+			this.pageSize = this.pageSize + 1;
+			console.log("这是", this.pageSize)
+				
+			if(this.options.id==1){
+				
+				this.gListBySearch( this.loadingType, this.pageSize, this.pageRows, this.options.search);
+			}else{
+				this.gListByShopType( this.loadingType, this.pageSize, this.pageRows, this.options.tid);
+			}
+		}
+	
+		
+	
+	},
 	methods: {
 		async gListBySearch( type, page, rows, search) {
+			let that=this;
 			const data = await getselectShopListBySearch({
 				province: uni.getStorageSync('address').province, //省
 				city: uni.getStorageSync('address').city, //市
@@ -66,12 +93,18 @@ export default {
 			
 			
 			if (data.status == 200) {
-				this.proList = data.data;
-				if(this.proList.length==0){
-					this.noStatus='display:block';
+				if(data.data.length==that.pageRows){
+					that.isLoadMore=true;
+				}else{
+					that.isLoadMore=false;
 				}
+				that.proList =that.proList.concat(data.data);
+				if(that.proList.length==0){
+					that.noStatus='display:block';
+				}
+			
 			} else {
-				this.proList =[];
+				that.proList =[];
 				uni.showToast({
 					title: data.msg,
 					icon: 'none'
@@ -79,6 +112,7 @@ export default {
 			}
 		},
 		async gListByShopType( type, page, rows, typeid) {
+			let that=this;
 			const data = await getselectShopListByShopType({
 				province: uni.getStorageSync('address').province, //省
 				city: uni.getStorageSync('address').city, //市
@@ -88,14 +122,22 @@ export default {
 				rows: rows, // 条数
 				typeid : typeid // 分类id
 			});
-			this.proList = data.data;
+	
 			if (data.status == 200) {
-				this.proList = data.data;
-				if(this.proList.length==0){
-					this.noStatus='display:block';
+				if(data.data.length==that.pageRows){
+					
+					that.isLoadMore=true;
+				}else{
+					
+					that.isLoadMore=false;
+				}
+				that.proList =that.proList.concat(data.data);
+			
+				if(that.proList.length==0){
+					that.noStatus='display:block';
 				}
 			} else {
-				this.proList =[];
+				that.proList =[];
 				uni.showToast({
 					title: data.msg,
 					icon: 'none'

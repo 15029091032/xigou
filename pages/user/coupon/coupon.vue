@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<!-- <view class="p-p" @click="selete()">
+		<view class="p-p" @click="selete()" v-for="(item,index) in couponList" :key="index">
 			<image src="../../../static/youhui/1.png" class="yhimg"></image>
 			<view class="yhgz">
 				<view class="yh-t">
@@ -10,7 +10,7 @@
 				<view class="yh-b">满300元可用</view>
 				<view class="yh-f">2020年1月21日-2020年3月21日</view>
 			</view>
-		</view> -->
+		</view> 
 		<!-- <view class="p-p">
 			<image src="../../../static/youhui/2.png" class="yhimg"></image>
 			<view class="yhgz">
@@ -22,21 +22,35 @@
 				<view class="yh-f">2020年1月21日-2020年3月21日</view>
 			</view>
 		</view> -->
-		<view  :style="noStatus" class="noOrder" ><image src="../../../static/temp/wu1.png" mode=""></image></view>
+		<view  v-if="couponList.length==0" class="noOrder" ><image src="../../../static/temp/wu1.png" mode=""></image></view>
 	</view>
 </template>
 
 <script>
-	
+		import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
 	import { selectConpostByUserid } from '../../../api/user.js';	
 	export default {
 		data() {
 			return {
-				couponList:{},
+				pageSize: 1,
+				pageRows: 10,
+				isLoadMore: false,
+				loadMore:'more', //	load
+				couponList:[],
 			}
 		},
 		onLoad(){
 			this.couponInfo();
+		},
+		onReachBottom() {
+			// console.log("pageSize:",this.pageSize)
+			// console.log("pageRows:",this.pageRows)
+			// console.log("isLoadMore:",this.isLoadMore)
+			
+			if (this.isLoadMore) {
+				this.pageSize = this.pageSize + 1;
+				this.couponInfo(this.sta);
+			}
 		},
 		methods: {
 			selete() {
@@ -51,18 +65,18 @@
 				let that=this;
 				let d={
 					'userid':uni.getStorageSync('dataInfo').id,
-					'page':1,
-					'rows':10,
+					'page':that.pageSize,
+					'rows':that.pageRows,
 				}
 				let data = await selectConpostByUserid(d);
 				 
 				 
 				if (data.status == 200) {
 					
-					that.couponList=data.data;
-					if(that.couponList.length<=0){
-						this.noStatus='display:block';
-					}
+					that.isLoadMore=data.data.length==that.pageRows ? true: false;
+				
+					that.couponList=that.couponList.concat(data.data);
+					
 				} else {
 					uni.showToast({
 						title: data.msg,

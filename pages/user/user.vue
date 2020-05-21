@@ -173,17 +173,32 @@
 			...mapState(['hasLogin'])
 		},
 		onLoad(){
-			
+			if(!this.hasLogin){
+				
+				uni.navigateTo({
+				    url: '../login/login'
+				});
+			}else{
+				this.getUserInfo() 
+			}
 			//console.log(this.hasLogin)
 			// if(!this.hasLogin){
 			//  return	uni.navigateTo({
 			// 		url: '/pages/login/login'
 			// 	});
 			// }
-			this.getUserInfo() 
+		
 		},
 		onShow(){	
-			//console.log(this.hasLogin)
+			// if(!uni.getStorageSync("dataInfo")){
+			// 	console.log(1)
+			// 	uni.navigateTo({
+			// 	    url: '../login/login'
+			// 	});
+			// }
+			
+			// 	this.getUserInfo() 
+			// console.log(this.hasLogin)
 			// if(!this.hasLogin){
 			//  return	uni.navigateTo({
 			// 		url: '/pages/login/login?type="我的"'
@@ -217,6 +232,7 @@
         computed: {
 			...mapState(['hasLogin','userInfo'])
 		},
+		
         methods: {
 			async getUserInfo(){
 				let that=this;
@@ -266,6 +282,25 @@
 			},
 			// 企业服务路由
 			goCompanyDetail(item){
+				if(uni.getStorageSync('loadingType')==2){
+					return  uni.showModal({
+									content: '请您登陆企业账号',
+									showCancel:true,
+									cancelText:"再想想",
+									cancelColor:"#FF0000",
+									confirmText:"确定",
+									confirmColor:"#4399FC",
+									success: function (res) {
+										if (res.confirm) {
+											uni.reLaunch({
+											    url: '../login/login'
+											});
+										} else if (res.cancel) {
+											console.log('用户点击取消');
+										}
+									}
+								});
+				}
 				uni.navigateTo({
 					url:item.url
 				})

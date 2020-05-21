@@ -53,6 +53,7 @@
 </template>
 
 <script>
+		import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
 import uniSegmentedControl from '@/components/uni-segmented-control/uni-segmented-control.vue';
 
 import {selectShopsByUserid,upShopByUserid,deleteShopByUserid} from '../../../api/goods.js';
@@ -66,29 +67,50 @@ export default {
 				class1:[],
 				class2:[],
 			},
+			pageSize: 1,
+			pageRows: 10,
+			isLoadMore: false,
+			loadMore:'more', //	load
 		};
 	},
-	components: { uniSegmentedControl },
+	components: { uniSegmentedControl,uniLoadMore},
 	onLoad(){
 		this.selectGoods()
 	},
+	onReachBottom() {
+		// console.log("pageSize:",this.pageSize)
+		// console.log("pageRows:",this.pageRows)
+		// console.log("isLoadMore:",this.isLoadMore)
+		
+		if (this.isLoadMore) {
+			this.pageSize = this.pageSize + 1;
+			this.shopInfo();
+		}
+	},
 	methods: {
 	 async	selectGoods(){
+		
 		 let that=this;
 			let d={
 				userid:uni.getStorageSync('dataInfo').id,
-				page:1,
-				rows  :20,
+				page  :that.pageSize,
+				rows:that.pageRows,
 				type :(that.current+1)
 			}
 			let data=await selectShopsByUserid(d)
 			if (data.status == 200) {
+				if(data.data.length==that.pageRows){
+					that.isLoadMore=true;
+				}else{
+					that.isLoadMore=false;
+				}
 				if((that.current+1)==1){
 					
-					that.listData.class1=data.data;
+					that.listData.class1=that.listData.class1.concat(data.data)  
 				}else if((that.current+1)==2){
-					that.listData.class2=data.data;
+					that.listData.class2=that.listData.class2.concat(data.data);
 				}
+			
 			} else {
 				uni.showToast({
 					title: data.msg,
@@ -142,6 +164,8 @@ export default {
 		onClickItem(index) {
 			if (this.current !== index.currentIndex) {
 				this.current = index.currentIndex;
+				this.pageSize=1;
+				this.listData={class1:[],class2:[]};
 			}
 			console.log(this.listData.class1.length)
 			console.log(this.listData.class2.length)

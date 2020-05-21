@@ -45,32 +45,59 @@
 	</view>
 </template>
 <script>
+		import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
 	import {  selectConlectShopsByUserid } from '../../../api/user.js';
 	export default {
 		data() {
 			return {
-				dataList:[]
+				dataList:[],
+				pageSize: 1,
+				pageRows: 10,
+				isLoadMore: false,
+				loadMore:'more', //	load
 			}
 		},
 		
-		async onLoad(options){
+		 onLoad(){
 			  
-			  console.log(   uni.getStorageSync('dataInfo'))
-			   
-			  let dataInfo= uni.getStorageSync('dataInfo')
-			
-			  let that=this;
-				 
-				const data = await selectConlectShopsByUserid({userid:dataInfo.id,page:1,rows:10,type:uni.getStorageSync('loadingType')});
-				
-				that.dataList=data.data;
-				
-			   // console.log(data)
-				
-				
+		this.selectData()
 			
 		},
+		onReachBottom() {
+			// console.log("pageSize:",this.pageSize)
+			// console.log("pageRows:",this.pageRows)
+			// console.log("isLoadMore:",this.isLoadMore)
+			
+			if (this.isLoadMore) {
+				this.pageSize = this.pageSize + 1;
+				this.selectData()
+			}
+		},
 		methods: {
+			async selectData(){
+				let dataInfo= uni.getStorageSync('dataInfo')
+				
+				  let that=this;
+					 
+					const data = await selectConlectShopsByUserid({userid:dataInfo.id,page:that.pageSize,rows:that.pageRows,type:uni.getStorageSync('loadingType')});
+					
+					
+				if(data.status==200){
+					if(data.data.length==that.pageRows){
+						that.isLoadMore=true;
+					}else{
+						that.isLoadMore=false;
+					}
+					
+					that.dataList=that.dataList.concat(data.data);
+				
+				}else{
+					uni.showToast({
+						title: data.msg,
+						icon: 'none'
+					});
+				}
+			},
 			//详情页
 			navToDetailPage(item) {
 				
@@ -81,6 +108,7 @@
 					url: `/pages/product/product?id=${id}&editItem=${JSON.stringify(item)}`
 				});
 			},
+			
 			
 		}
 	}

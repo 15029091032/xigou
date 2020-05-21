@@ -144,6 +144,9 @@
 				uni.setStorageSync('address', obj);
 				that.address=obj;
 					
+				},function(err){
+					// console.log("地址",err)
+						// that.getadd()
 				})
 				
 			},

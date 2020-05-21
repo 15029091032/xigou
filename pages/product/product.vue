@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<image src="../../static/select.png" class="fenxiang" @click="share"></image>
+		<!-- <image src="../../static/select.png" class="fenxiang" @click="share()"></image> -->
 		<view class="carousel">
 			<swiper indicator-dots circular="true" duration="400">
 				<swiper-item class="swiper-item" v-for="(item, index) in imgUrls" :key="index">
@@ -54,28 +54,27 @@
 		<view class="detail-desc">
 			<view class="d-header"><text>商品详情</text></view>
 			<view class="c-content">
-				<view  v-for="(item, index) in desc" :key="index" ><image class="c_img" :src="item" ></image></view>
+				<view><image mode="widthFix" v-for="(item, index) in desc" :key="index" class="c_img" :src="item"></image></view>
 			</view>
 			<!-- <rich-text :nodes="desc"></rich-text> -->
 		</view>
 
 		<!-- 底部操作菜单 -->
 		<view class="page-bottom">
-			<view  open-type="switchTab" class="p-b-btn" @click="shopLink()">
+			<view open-type="switchTab" class="p-b-btn" @click="shopLink()">
 				<text class="yticon icon-xiatubiao--copy"></text>
-				<text>店铺</text> 
+				<text>店铺</text>
 			</view>
 			<navigator url="/pages/cart/cart" open-type="switchTab" class="p-b-btn">
 				<text class="yticon icon-gouwuche"></text>
 				<text>客服</text>
 			</navigator>
 			<view class="p-b-btn" :class="{ active: favorite }" @click="toFavorite">
-				<text class="yticon icon-shoucang " ></text>
+				<text class="yticon icon-shoucang "></text>
 				<text>收藏</text>
 			</view>
 
 			<view class="action-btn-group">
-				
 				<button type="black" style="background-color: #FFF55C;margin: 0;flex: 1;" class=" action-btn no-border add-cart-btn" @click="toggleSpec(2)">加入购物车</button>
 				<button type="black" style="background-color: #FFE200;margin: 0;flex: 1;" class=" action-btn no-border buy-now-btn" @click="toggleSpec(3)">立即购买</button>
 			</view>
@@ -88,20 +87,28 @@
 			<view class="layer attr-content" @click.stop="stopPrevent">
 				<view class="a-t">
 					<!-- <image src="https://gd3.alicdn.com/imgextra/i3/0/O1CN01IiyFQI1UGShoFKt1O_!!0-item_pic.jpg_400x400.jpg"></image> -->
-					<view class="right"><text class="price" >¥{{skuPrice}}</text></view>
+					<view class="right">
+						<text class="price">¥{{ skuPrice }}</text>
+					</view>
 				</view>
 				<text class="r-g">规格</text>
 				<view class="r-h">
-				<!-- 	<view class="r-hf"><text>{{editItem.secondeTypeId}}</text></view>
+					<!-- 	<view class="r-hf"><text>{{editItem.secondeTypeId}}</text></view>
 					<view class="r-ht"><text>{{editItem.secondeTypeId}}</text></view> -->
-					<view  v-for="(item,index) in dataDetail.skuList" :key="index" :name="item.id"  @click="choiceSku(item.id,item.skuPrice,item.skuName)"  :class="index==0?'r-hf status_but':'r-ht status_but'"   ><text>{{item.skuName}}</text></view>
-
+					<view
+						v-for="(item, index) in dataDetail.skuList"
+						:key="index"
+						:name="item.id"
+						@click="choiceSku(item.id, item.skuPrice, item.skuName)"
+						:class="index == 0 ? 'r-hf status_but' : 'r-ht status_but'"
+					>
+						<text>{{ item.skuName }}</text>
+					</view>
 				</view>
-				 
-				<view  class="item-right">
-					 
+
+				<view class="item-right">
 					<text class="r-tl">数量</text>
-					<uni-number-box	class="r-tr"	:min="1"	:max="9"	></uni-number-box>
+					<uni-number-box class="r-tr" :min="1" :max="9"></uni-number-box>
 				</view>
 				<!-- <view v-for="(item,index) in specList" :key="index" class="attr-list">
 					<text>规格</text>
@@ -118,19 +125,33 @@
 					</view>
 				</view> -->
 				<button class="btn" @click="toggleSpec(5)">完成</button>
-				
 			</view>
-			
 		</view>
+		<view class="shareBg"  v-if="shareType">
+			<view class="title">分享到</view>
+			<view class="cont">
+				<view class="c" @click="share('wechat')">
+					<view><image class="img"  src="../../static/ic_share_wechat.png"></image></view>
+					<view class="t">微信分享</view>
+				</view>
+				<view class="c" @click="share('moment')">
+					<view><image class="img"  src="../../static/ic_share_moment.png"></image></view>
+					<view class="t">朋友圈分享</view>
+				</view>
 		
+			</view>
+			<view class="clean">
+				 <button class="mini-btn" @click="shareType=!shareType">取消</button>
+			</view>
+		</view>
+		<view  :animation="animationData" class="heidBG" v-if="shareType" @click="shareType=!shareType"></view>
 	</view>
-</template> 
- 
-<script> 
-import uniNumberBox from "@/components/uni-number-box.vue"
-import { sureConlectShopsByUserid,addOrderShop } from '../../api/cart.js';
+</template>
+
+<script>
+import uniNumberBox from '@/components/uni-number-box.vue';
+import { sureConlectShopsByUserid, addOrderShop } from '../../api/cart.js';
 import { selectShopByid } from '../../api/home.js';
-// import uniPopup from '@/components/uni-popup/uni-popup-share.vue'
 
 export default {
 	components: {
@@ -140,67 +161,86 @@ export default {
 	data() {
 		return {
 			editItemId: {}, // 接受上个页面传递过来的数据
-			dataDetail:{},
+			dataDetail: {},
 			specClass: 'none',
 			specSelected: [],
-			skuid:-1,
-			skuPrice:-1,
+			skuid: -1,
+			skuPrice: -1,
 			favorite: false,
-			shareList: [],
-			number:1,
-			imgUrls:[],
-			desc:[],
-			type:0,
-			skuList:[],
-			price:0
-			
+			number: 1,
+			imgUrls: [],
+			desc: [],
+			type: 0,
+			skuList: [],
+			price: 0,
+			shareType:false,
+			animationData:""
 		};
 	},
 	async onLoad(option) {
-	
-		let that=this;
+		let that = this;
 		that.editItemId = option.id;
-		
 
-		
-		 
-		const data = await selectShopByid({shopid:that.editItemId,userid:uni.getStorageSync('dataInfo').id});
-		
-		
-		 that.dataDetail=data.data;
-		if(data.data.is_conlect==1){
-			that.favorite=true;
+		const data = await selectShopByid({ shopid: that.editItemId, userid: uni.getStorageSync('dataInfo').id });
+
+		that.dataDetail = data.data;
+		if (data.data.is_conlect == 1) {
+			that.favorite = true;
 		}
-		that.imgUrls=that.dataDetail.imgUrls.split(',');
-		that.desc=that.dataDetail.detilas.split(',');	
-		that.skuid=that.dataDetail.skuList[0].id;
-		that.skuPrice=that.dataDetail.skuList[0].skuPrice;
-		that.skuName=that.dataDetail.skuList[0].skuName;
-		// 	for (let cItem of this.specChildList) {
-		// 		if (cItem.pid === item.id) {
-		// 			this.$set(cItem, 'selected', true);
-		// 			this.specSelected.push(cItem);
-		// 			break; //forEach不能使用break
-		// 		}
-		// 	}
-		// });
-		
-		
-		uni.$on('getNumber',function(data){
-			
-			
-		     that.number= data.number;
-			
-		 })
-		
-	
-	},
+		that.imgUrls = that.dataDetail.imgUrls.split(',');
+		that.desc = that.dataDetail.detilas.split(',');
+		that.skuid = that.dataDetail.skuList[0].id;
+		that.skuPrice = that.dataDetail.skuList[0].skuPrice;
+		that.skuName = that.dataDetail.skuList[0].skuName;
 
+
+		uni.$on('getNumber', function(data) {
+			that.number = data.number;
+		});
+		that.imgSty()
+	},
+	onReady(option) {
+		// setTimeout(function() {
+		// 	let arry = document.getElementsByClassName('c_img');
+		// 	console.log('arry', arry.length);
+		// 	for (let i = 0; i < arry.length; i++) {
+		// 		arry[i].style.height = '100%';
+		// 		arry[i].getElementsByTagName('img')[0].style.opacity = 1;
+
+		// 		arry[i].getElementsByTagName('img')[0].style.position = 'initial';
+		// 	}
+		// }, 1000);
+	},
+	onNavigationBarButtonTap(e) {
+
+			let that=this;
+						console.log( e.index)
+						  if(e.index==0){
+							let that=this;
+							that.shareType=!that.shareType;
+						
+						  }
+	   },
 	methods: {
-	
+		imgSty(){
+			let view = uni.createSelectorQuery().select('.c_img');
+					view.fields({
+						size: true
+					}, 
+				    data => {
+						console.log(data)
+			}).exec();
+		
+		// 	alert(1)
+		// 	const query = uni.createSelectorQuery('.c_img').select('.c_img');
+		// 	query.fields({id:true,dataset:true},data=>{
+		// 		console.log(data)
+		// 	}).exec();
+
+		},
 		//规格弹窗开关
 		toggleSpec(type) {
-			let that=this;
+			let that = this;
 			if (that.specClass === 'show') {
 				that.specClass = 'hide';
 				setTimeout(() => {
@@ -208,51 +248,39 @@ export default {
 				}, 250);
 			} else if (that.specClass === 'none') {
 				that.specClass = 'show';
-				that.skuPrice=that.dataDetail.skuList[0].skuPrice;
+				that.skuPrice = that.dataDetail.skuList[0].skuPrice;
 			}
-			if(type==4) return
-			
-			if(type==5){
-				if(that.type==1){
-					
-					console.log('规格',that.number)
-				}else if(that.type==2){
-					this.addshopCar()
+			if (type == 4) return;
+
+			if (type == 5) {
+				if (that.type == 1) {
+					console.log('规格', that.number);
+				} else if (that.type == 2) {
+					this.addshopCar();
+				} else if (that.type == 3) {
 				
-				}else if(that.type==3){
-					
-					
-				// let d={
-				// 	'userid':uni.getStorageSync('dataInfo').id,			
-				// 	'shopid':that.dataDetail.shopid,
-				// 	'skuid':that.skuid,
-				// 	'shop_price':that.skuPrice,
-				// 	'num':that.number,
-				// 	'type':uni.getStorageSync('loadingType'),
-				// }
-				 
-					console.log(that.dataDetail.shopImg)
-				let arryData=[{
-					sku_price:that.skuPrice,
-					 shop_img:that.dataDetail.shopImg,
-					sku_name:this.skuName,
-					id:that.skuid,
-					shopid:that.dataDetail.shopid,
-					shop_name:this.dataDetail.shopName,
-					shop_num:that.number,
-					
-				}]
-		
-						uni.navigateTo({
-							url: `../cart/confrims/confrims?type=1&arryData=${JSON.stringify(arryData)}`
-						});
-				
+
+					console.log(that.dataDetail.shopImg);
+					let arryData = [
+						{
+							sku_price: that.skuPrice,
+							shop_img: that.dataDetail.shopImg,
+							sku_name: this.skuName,
+							id: that.skuid,
+							shopid: that.dataDetail.shopid,
+							shop_name: this.dataDetail.shopName,
+							shop_num: that.number
+						}
+					];
+
+					uni.navigateTo({
+						url: `../cart/confrims/confrims?type=1&arryData=${JSON.stringify(arryData)}`
+					});
 				}
-			}else{
-				that.type=type;
-				
+			} else {
+				that.type = type;
 			}
-			
+
 			/*
 			  type : 
 			   1 表示点击规格
@@ -261,8 +289,6 @@ export default {
 			   4 表示赢藏面板
 			   5表示点击完成
 			*/
-		  
-		
 		},
 		//选择规格
 		selectSpec(index, pid) {
@@ -288,24 +314,53 @@ export default {
 			});
 		},
 		//分享
-		share() {
-			 // this.$refs.popup.open()
-		},
-		async addshopCar(){
-			let that=this;
-			let d={
-				'userid':uni.getStorageSync('dataInfo').id,			
-				'shopid':that.dataDetail.shopid,
-				'skuid':that.skuid,
-				'shop_price':that.skuPrice,
-				'num':that.number,
-				'type':uni.getStorageSync('loadingType'),
-			}
-			
+		share(type) {
 		
+			
+			let that=this;
+			
+			that.shareType=!that.shareType;
+	
+			if(type=='wechat'){
+				
+			}else if(type=='moment'){
+				
+			} 
+			uni.share({
+			    provider: "weixin",
+			    scene:type=='wechat'? "WXSceneSession" : "WXSenceTimeline",
+			    type: 1,
+				title:that.dataDetail.shopName,
+			    summary:that.dataDetail.shopName,
+			    success: function (res) {
+					uni.showToast({
+						title: res.errMsg,
+						icon: 'none'
+					});
+			        console.log("success:" + JSON.stringify(res));
+			    },
+			    fail: function (err) {
+					uni.showToast({
+						title: res.errMsg,
+						icon: 'none'
+					});
+			        console.log("fail:" + JSON.stringify(err));
+			    },
+				})
+		},
+		async addshopCar() {
+			let that = this;
+			let d = {
+				userid: uni.getStorageSync('dataInfo').id,
+				shopid: that.dataDetail.shopid,
+				skuid: that.skuid,
+				shop_price: that.skuPrice,
+				num: that.number,
+				type: uni.getStorageSync('loadingType')
+			};
+
 			let data = await addOrderShop(d);
-			
-			
+
 			uni.showToast({
 				title: data.msg,
 				icon: 'none'
@@ -313,51 +368,47 @@ export default {
 		},
 		//收藏
 		async toFavorite() {
-			let that=this;
-		
-			let d={
-				'userid':uni.getStorageSync('dataInfo').id,			
-				'shopid':that.editItemId
-			}
-			
+			let that = this;
+
+			let d = {
+				userid: uni.getStorageSync('dataInfo').id,
+				shopid: that.editItemId
+			};
+
 			let data = await sureConlectShopsByUserid(d);
-			
-			
+
 			if (data.status == 200) {
 				this.favorite = !this.favorite;
 				uni.showToast({
 					title: data.msg,
 					icon: 'none'
 				});
-				
 			} else {
 				uni.showToast({
 					title: data.msg,
 					icon: 'none'
 				});
 			}
-			
 		},
-		shopLink(){
-			 
+		shopLink() {
 			uni.navigateTo({
-				url: '../shop/shop?id='+this.dataDetail.userid
+				url: '../shop/shop?id=' + this.dataDetail.userid
 			});
 		},
-		choiceSku(id,price,skuName){
-			this.skuid=id;
-			this.skuPrice=price;
-			this.skuName=skuName;
-			
-		var skuArry=document.getElementsByClassName("status_but")
-		for(let i=0;i<skuArry.length;i++){
-			skuArry[i].className=" status_but r-ht"
-		}
-			
-		document.getElementsByName(id)[0].className=" status_but r-hf"
+		choiceSku(id, price, skuName) {
+			this.skuid = id;
+			this.skuPrice = price;
+			this.skuName = skuName;
+
+			var skuArry = document.getElementsByClassName('status_but');
+			for (let i = 0; i < skuArry.length; i++) {
+				skuArry[i].className = ' status_but r-ht';
+			}
+
+			document.getElementsByName(id)[0].className = ' status_but r-hf';
 		},
 		buy() {
-			this.toggleSpec()
+			this.toggleSpec();
 			// uni.navigateTo({
 			// 	url: `/pages/order/createOrder`
 			// });
@@ -382,10 +433,9 @@ page {
 	position: fixed;
 	z-index: 999;
 	right: 0;
-	top:  var(--status-bar-height);
-	
-	 padding-top: 10upx;
-	
+	top: var(--status-bar-height);
+
+	padding-top: 10upx;
 }
 .r-g {
 	font-size: 24upx;
@@ -429,7 +479,7 @@ page {
 		color: #333;
 	}
 	.r-tr {
-		position: 	static;
+		position: static;
 	}
 }
 .btn {
@@ -804,7 +854,6 @@ page {
 		min-height: 40vh;
 		border-radius: 10upx 10upx 0 0;
 		background-color: #fff;
-		
 	}
 	@keyframes showPopup {
 		0% {
@@ -914,13 +963,88 @@ page {
 		}
 	}
 }
-// .c_img{
-// 	width: 100%;
-// 	// height: auto;
+.c_img {
+	width: 100%;
+	// height: 1000upx;
+}
+
+.shareBg {
+	background-color: white;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+
+	box-shadow: 0px 0px 26px #c7c0c0;
+	z-index: 998;
+	padding: 5% 0;
+	.title,
+	.clean {
+		width: 100%;
+		text-align: center;
+		margin: 20upx 0;
+		line-height: 50upx;
+		font-size: 30upx;
+	}
+	.cont {
+		display: flex;
+		flex-wrap: wrap;
+		.c {
+			width: 25%;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			.img{
+				width: 120upx;
+				    height: 120upx
+					
+			}
+			.t{
+				font-size: 24upx;
+			}
+		}
+	}
+	.clean{
+		margin-top: 10%;
+		.mini-btn{
+		    margin: 0 6%;
+		    border-radius: 100upx;
+			font-size: 30upx;
+		}
+		.uni-button:after{
+			border-radius: 100upx;
+		}
+	}
+}
+.heidBG{
+		position: fixed;
+	    z-index: 997;
+	    top: 0;
+	    right: 0;
+	    left: 0;
+	    bottom: 0;
+	    background: rgba(0,0,0,.6);
+}
+.c_img>img{
 	
-// }
+		position: initial;
+		opacity: 1;
+	
+}
+
+// view class="shareBg">
+// 			<text class="title">分享到</text>
+// 			<view class="cont">
+// 				<view>1</view>
+// 				<view>1</view>
+// 				<view>1</view>
+// 				<view>1</view>
+// 				<view>1</view>
+// 			</view>
+// 			<text class="clean">取消</text>
+// 		</view>
 // .uni-image{
-// 	img{	
+// 	img{
 // 		    position: initial;opacity: 0;
 // 	}
 // }

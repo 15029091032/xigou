@@ -4,17 +4,27 @@
 			<view class="box-t">收货地址</view>
 			<view class="box-b">
 				<view class="box-l"><image src="../../../static/111.png"></image></view>
-				<view class="box-r" v-for="(item, index) in addressList" :key="index" v-if="item.isDefault==1">
-					<view class="box-rt">
-						<text class="box-rtt">收件人：{{item.name}}</text>
-						<text>{{item.phone}}</text>
+						<view class="box-r" v-for="(item, index) in addressList" :key="index" v-if="item.isDefault==1">
+							<view class="box-rt">
+								<text class="box-rtt">收件人：{{item.name}}</text>
+								<text>{{item.phone}}</text>
+							</view>
+							<view class="box-rb">{{item.proCityArea+item.address}}</view>
+							<view class="box-rf" @click="goAddress(item)">
+								<text>其他地址</text>
+								<image src="../../../static/112.png"></image>
+							</view>
+						</view>
+			
+			
+					<view class="box-r" style="justify-content: center;" v-if="!status" >
+						
+						<view class="box-rf" @click="goAddress(item)">
+							<text>其他地址</text>
+							<image src="../../../static/112.png"></image>
+						</view>
 					</view>
-					<view class="box-rb">{{item.proCityArea+item.address}}</view>
-					<view class="box-rf" @click="goAddress(item)">
-						<text>其他地址</text>
-						<image src="../../../static/112.png"></image>
-					</view>
-				</view>
+								
 			</view>
 		</view>
 		<view class="collection" v-for="(item, index) in arryData" :key="index" >
@@ -85,6 +95,7 @@ export default {
 			option:{},
 			shopInfo:{},
 			arryData:[],
+			status:false,
 		};
 	},
 	async onLoad(option){
@@ -133,6 +144,12 @@ export default {
 				
 				that.addressList=data.data;
 				
+				for(let i=0;i<that.addressList.length;i++){
+					if(that.addressList[i].isDefault==1){
+						that.status=true;
+					}
+				}
+				
 			} else {
 				uni.showToast({
 					title: data.msg,
@@ -177,7 +194,6 @@ page {
 }
 .address-box {
 	width: 100%;
-	height: 295upx;
 	background-color: #fff;
 	padding: 20upx;
 	.box-t {
@@ -188,15 +204,18 @@ page {
 		border-bottom: 2upx solid #f6f6f6;
 	}
 	.box-b {
-		height: 184upx;
+			
 		display: flex;
+		align-items: center; 
 		justify-content: flex-start;
+		
+		padding: 30upx 00upx;
 		.box-l {
 			width: 80upx;
 			image {
 				width: 32upx;
 				height: 34upx;
-				margin-top: 70upx;
+				
 			}
 		}
 		.box-r {

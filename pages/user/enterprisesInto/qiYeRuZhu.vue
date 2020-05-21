@@ -70,6 +70,7 @@
 import uniPopup from '@/components/uni-popup/uni-popup.vue';
 import base from '../../../api/request/index.js';
 import { realAppUser} from '../../../api/user.js';
+import {detSql,detPhone} from '../../../public/base.js'
 export default {
 	data() {
 		return {
@@ -196,15 +197,33 @@ export default {
 					 		icon: 'none'
 					 	});
 				 }
+				 if(!detSql(that.realname)){
+					 return	uni.showToast({
+					 		title: "非法字符请重新输入您的姓名",
+					 		icon: 'none'
+					 	});
+				 }
 				 if(!that.phone){
 				 					 return	uni.showToast({
 				 					 		title: "请输入电话",
 				 					 		icon: 'none'
 				 					 	});
 				 }
+				 if(!detPhone(that.phone)){
+					 return	uni.showToast({
+					 		title: "电话输入格式不正确",
+					 		icon: 'none'
+					 	});
+				 }
 				 if(!that.store_name){
 				 					 return	uni.showToast({
 				 					 		title: "请输入商店名称",
+				 					 		icon: 'none'
+				 					 	});
+				 }
+				 if(!detSql(that.store_name)){
+				 					 return	uni.showToast({
+				 					 		title: "非法字符请重新输入您的上的名称",
 				 					 		icon: 'none'
 				 					 	});
 				 }

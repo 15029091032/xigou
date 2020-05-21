@@ -58,23 +58,7 @@
 					</view>
 				</block>
 			</view>
-			<!-- 底部菜单栏 -->
-			<!-- <view class="action-section">
-				<view class="checkbox">
-					<image :src="allChecked ? '/static/selected.png' : '/static/select.png'" mode="aspectFit" @click="check('all')"></image>
-					<view class="clear-btn" :class="{ show: allChecked }" @click="clearCart">清空</view>
-				</view>
-				<view class="total-box">
-					<text class="price">¥{{ total }}</text>
-					<text class="coupon">
-						已优惠
-						<text>74.35</text>
-						元
-					</text>
-				</view>
-				<button type="primary" class="no-border confirm-btn" @click="createOrder">去结算</button>
-			</view> -->
-
+	
 			<view class="cart-foot">
 				<view v-if="!isEdit" class="box-wrapper">
 					<view class="left" @click="goodsAllCheck">
@@ -97,13 +81,14 @@
 </template>
 
 <script>
+import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
 import { accAdd, accMul } from '../../utils/index.js';
 import { mapState } from 'vuex';
 import uniNumberBox from '@/components/uni-number-box.vue';
 import { updateOrderShopNum, selectOrderShopsByUserid,deleteOrderShop } from '../../api/cart.js';
 export default {
 	components: {
-		uniNumberBox
+		uniNumberBox,uniLoadMore
 	},
 	data() {
 		return {
@@ -113,27 +98,30 @@ export default {
 			cartList: [],
 			isEdit: false,
 			loadingType: '',
-			dataInfo: ''
+			dataInfo: '',
+			pageSize: 1,
+			pageRows: 10,
+			isLoadMore: false,
+			loadMore:'more', //	load
 		};
 	},
 	onLoad() {
 	
+	
+	},
+	onShow(){
+		this.cartList=[];
 		try {
 			
 			const loadingType = uni.getStorageSync('loadingType');
 			const dataInfo = uni.getStorageSync('dataInfo');
-			console.log('userInfo========', dataInfo.id);
-			console.log('loadingType========', loadingType);
+			
 			this.loadingType = loadingType;
 			this.dataInfo = dataInfo.id;
 		} catch (e) {
 			// error
 		}
 		this.loadData();
-	},
-	onShow(){
-	console.log("hasLogin的状态：",this.hasLogin)
-	console.log("empty的状态：",this.empty)
 	},
 	watch: {
 		//显示空白页
@@ -143,6 +131,19 @@ export default {
 				this.empty = empty;
 			}
 		}
+	},
+	onReachBottom() {
+	
+		
+		if (this.isLoadMore) {
+			this.pageSize = this.pageSize + 1;
+			this.loadData();
+				
+		
+		}
+	
+		
+	
 	},
 	computed: {
 		...mapState(['hasLogin'])
@@ -176,15 +177,19 @@ export default {
 		},
 		//请求数据
 		async loadData() {
-			console.log(31)
+		
 			// let list = await this.$api.json('cartList');
 			const data = await selectOrderShopsByUserid({
-				page: '1',
-				rows: '10',
+				page: this.pageSize,
+				rows: this.pageRows,
 				userid: this.dataInfo,
 				type: this.loadingType
 			});
-			console.log(this.cartList);
+			if(data.data.length==this.pageRows){
+				this.isLoadMore=true;
+			}else{
+				this.isLoadMore=false;
+			}
 			// this.cartList = data.data;
 			let list = data.data;
 		
@@ -201,7 +206,7 @@ export default {
 			
 		
 			
-			this.cartList = cartList;
+			this.cartList =this.cartList.concat(cartList);
 			this.calcTotal(); //计算总价
 		},
 		// 确认订单
@@ -322,12 +327,7 @@ export default {
 			}
 			this.addDel(obj)
 			
-			// updateOrderShopNum({
-			// 	id:id,
-			// 	num:data.number
-			// })
-			// this.add({})
-			// this.cartList[data.index].number = data.number;
+		
 			this.cartList[data.parentIndex].shopList[data.index].shop_num = data.number;
 			this.calcTotal();
 		},
@@ -369,15 +369,17 @@ export default {
 			});
 		},
 		async deleteShop(arryShop){
-			
+			let  that=this;
 			let data = await deleteOrderShop({'ids':JSON.stringify(arryShop)})
 			
 			if (data.status == 200) {
+			  
 			  
 				uni.showToast({
 					title: data.msg,
 					icon: 'none'
 				});
+				setTimeout(	that.loadData(),800)
 			} else {
 				uni.showToast({
 					title: data.msg,

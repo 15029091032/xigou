@@ -28,7 +28,8 @@
 			<text class="cell-tit">退出登录</text>
 		</view>
 		<view class="list-cell log-out-btn" @click="toLogout">
-			 <button type="primary" class="cell-tits">切换企业账号</button>
+			 <button type="primary" class="cell-tits" v-if="type==1">切换成个人账号</button>
+			 <button type="primary" class="cell-tits" v-if="type==2">切换成企业账号</button>
 		</view> 
 		<!-- <view class="list-cell">
 			<text class="cell-tit">检查更新</text>
@@ -42,6 +43,7 @@
 </template>
 
 <script>
+	
 	import {  
 	    mapMutations  
 	} from 'vuex';
@@ -49,9 +51,11 @@
 		data() {
 			return {
 					version:'1.0.0',
+					type:uni.getStorageSync('loadingType'),
 			};
 		},
 		onLoad(){
+			console.log(this.type)
 			try{
 				this.version=plus.runtime.version
 			}catch(e){
@@ -70,9 +74,25 @@
 				// this.$api.msg(`跳转到${url}`);
 			},
 			goout() {
-				uni.navigateTo({
-					url: '../login/login'
-				})
+				let that=this;
+			// uni.setStorageSync('dataInfo', provider);
+			// uni.setStorageSync('loadingType', provider.type);
+			// uni.setStorage({key:'token',	data: provider.token,success() {}})
+			
+			uni.removeStorage({
+			    key: 'token',
+			    success: function (res) {
+			       uni.removeStorageSync('dataInfo');
+			       uni.removeStorageSync('loadingType');
+				    that.logout();
+					console.log("删除成功")
+				   uni.reLaunch({
+				       url: '../login/login'
+				   });
+			    }
+			});
+			  
+			
 			},
 			// 账号管理
 			accountManagement() {
@@ -91,13 +111,23 @@
 				})
 			},
 			toLogout(){
+				let that=this;
 				uni.showModal({
 				    content: '确定要切换企业账号么',
 				    success: (e)=>{
 				    	if(e.confirm){
-				    		this.logout();
+							
+							let dataInfo=uni.getStorageSync("dataInfo");
+							dataInfo.type=that.type==1?2:1;
+						
+							
+							uni.setStorageSync("dataInfo",dataInfo)
+							uni.setStorageSync("loadingType",that.type==1?2:1)
+				    	//	this.logout();
 				    		setTimeout(()=>{
-				    			uni.navigateBack();
+				    			uni.reLaunch({
+				    			    url: '../index/index'
+				    			});
 				    		}, 200)
 				    	}
 				    }

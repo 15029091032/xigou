@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 			<uni-list class="sort" >
-			    <uni-list-item title="所属分类" :note="this.nameType[0].name+this.nameType[1].name+this.nameType[2].name" @click="goCatetory()"></uni-list-item>
+			    <uni-list-item  title="所属分类" :note="nameType[0].name+nameType[1].name+nameType[2].name" @click="goCatetory()"></uni-list-item>
 			</uni-list>
 			<uni-list class="sort s-name">
 				<text class="s-title">商品标题</text>
@@ -10,7 +10,19 @@
 			</uni-list>
 			<view class="upph">
 				<text class="upph-t">商品主图(最多上传5张)</text>
-				<sunui-upimg @change="getImageInfo4" :upload_auto="true" ref="upimg4" upload_count="5" :url="url" :upimg_preview="serviceArr"></sunui-upimg>
+				<view class="listimg">
+					
+					<view class="imgsub" v-for="(item,index) in shopHeadImg"   v-if="item.open==false"     :key="index" >
+						<image     class="headImg" :src="item.img">
+							<uni-view data-v-7d89e041="" class="sunui-img-removeicon right" @click="delImg(index)">×</uni-view>
+						</image>
+					</view>
+					<view  class="imgsub" v-for="(item,index) in shopHeadImg"   v-if="item.open==true&&(shopHeadImg.length-1)<5"  @click="open(1)"    :key="index" >
+						<image     class="headImg" :src="item.img"></image>
+					</view>
+					
+				</view>
+				<!-- <sunui-upimg @change="getImageInfo4" :upload_auto="true" ref="upimg4" upload_count="5" :url="url" :upimg_preview="serviceArr"></sunui-upimg> -->
 			</view>
 			<view class="norms" v-for="(item, index) in sku" :key="index" v-if="item.status" >
 				<view class="nleft">
@@ -26,7 +38,7 @@
 				<image  v-if="(sku.length-1)!=index" src="../../../static/slices/shanchu.png" class="xj" @click="delete_skuData(index)"></image>
 				<image  v-if="(sku.length-1)==index" src="../../../static/slices/xinzeng.png" class="xj" @click="push_skuData()"></image>
 			</view>
-		
+		 
 			<view class="norms price">
 				<view class="nleft">
 					<view class="guige">
@@ -49,7 +61,19 @@
 			</view> -->
 			<view class="upph">
 				<text class="upph-t">商品详情图片(最多上传5张)</text>
-				<sunui-upimg @change="getImageInfo5" :upload_auto="true" ref="upimg5" upload_count="5" :url="url" :upimg_preview="serviceArr5"></sunui-upimg>
+				<view class="listimg">
+					
+					<view class="imgsub" v-for="(item,index) in shopHeadImg5"   v-if="item.open==false"     :key="index" >
+						<image     class="headImg" :src="item.img">
+							<uni-view data-v-7d89e041="" class="sunui-img-removeicon right" @click="delImg(index)">×</uni-view>
+						</image>
+					</view>
+					<view  class="imgsub" v-for="(item,index) in shopHeadImg5"   v-if="item.open==true&&(shopHeadImg5.length-1)<5"  @click="open(2)"    :key="index" >
+						<image     class="headImg" :src="item.img"></image>
+					</view>
+					
+				</view>
+				
 			</view>
 			<uni-list class="sort buts" >
 			    <uni-list-item  :show-switch="true" title="爆品推荐" @switchChange="switchChange" />
@@ -64,21 +88,30 @@
 					<text class="tit" @click="sub(1)">发布</text>
 				</view>
 			</view>
+			<uni-popup ref="popup" type="bottom" class="popus">
+				<view class="see">
+					<button type="default" plain class="btn" @click="upheadImg('camera')">拍照上传</button>
+					<button type="default" plain class="btn" @click="upheadImg('album')">本地上传</button>
+				</view>
+				<view class="rest">
+					<button type="default" plain class="btn" @click="close()">取消</button>
+				</view>
+			</uni-popup>
 	</view>
 </template>
 
 <script>
-	import base_url from '../../../api/request/index.js';
+	import base from '../../../api/request/index.js';
 	import {empty_b} from '../../../public/base.js';
 	import {saveShopByUserid,selectShopByID} from '../../../api/goods.js';
 	import uniList from "@/components/uni-list/uni-list.vue"
 	import uniListItem from "@/components/uni-list-item/uni-list-item.vue"
-	import sunUiUpimg from '@/components/sunui-upimg/sunui-upimg.vue';
-	
+	import uniPopup from '@/components/uni-popup/uni-popup.vue';
 	
 	export default {
 		data() {
 			return {
+				img_type:0,
 				itemid:'',
 				itemData:{},
 				items:[],
@@ -86,57 +119,92 @@
 				serviceArr5:[],
 				nameType:[{name:"请",id:false},{name:"选",id:false},{name:"择",id:false}],
 				add_tr : false,
-				url:base_url.baseUrl+'user/upload',
 				switch_check:2,
 				shop_name:'',
 				sku:[],
 				sell_price:'',
 				vip_price:'',
 				number:'',
+				shop_img:'',
+				shopHeadImg:[{img:'../../../static/up.png',status:true,open:true}],
+				shopHeadImg5:[{img:'../../../static/up.png',status:true,open:true}],
 			}
 		},
-		components: {uniList,uniListItem},
+		components: {uniList,uniListItem,uniPopup},
 		onLoad(option) {
-			// if(empty_b(option.id)){
-			// 	this.itemid= option.id
-			// 	 this.viewData() 
-			// }
-			  
+		
 			  
 			this.push_skuData()
 		},
-		onShow: function() {
-			let pages = getCurrentPages();
-			console.log("page",pages)
-			console.log("page",pages.length)
-			let currPage = pages[pages.length-1];
-			if(currPage.ooa){
-				this.nameType=currPage.ooa;
-	
-			}
-
-			
+		onShow(){
+			console.log(this.nameType)
 		},
+	
 		methods: {
-		   async viewData(){
-				let that=this;
-				
-				let data=await selectShopByID({shopid: that.itemid});
-				console.log("data",data)
-				if (data.status == 200) {
-				
-					
-					
-					
-				
-					
-				} else {
-					uni.showToast({
-						title: data.msg,
-						icon: 'none'
-					});
+			delImg(index){
+				if(this.img_type==1){
+					this.shopHeadImg.splice(index,1)
+					console.log(this.shopHeadImg)
+				}else if(this.img_type==2){
+					this.shopHeadImg5.splice(index,1)
+					console.log(this.shopHeadImg)
 				}
 				
+				
+			},
+			upheadImg(type){
+				
+				let that=this;
+				that.close()
+				//that.close()
+				uni.chooseImage({
+				    count: 1, //默认9
+				    sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
+				    sourceType: [type], //从相册选择
+				    success: function (res) {
+				       
+						 const tempFilePaths = res.tempFilePaths;
+						uni.uploadFile({
+						            url: base.baseUrl+'user/upload', 
+						            filePath: tempFilePaths[0],
+						            name: 'file',
+						            success: (data) => {
+										
+										console.log(data.statusCode)
+										if(data.statusCode==200){
+											
+											if(that.img_type==1){
+												that.shopHeadImg.unshift({img:JSON.parse(data.data).data,status:true,open:false})
+												if(that.shopHeadImg.length>=6){
+													that.shopHeadImg[that.shopHeadImg.length-1].status=false;
+												}
+											}else if(that.img_type==2){
+												that.shopHeadImg5.unshift({img:JSON.parse(data.data).data,status:true,open:false})
+												if(that.shopHeadImg5.length>=6){
+													that.shopHeadImg5[that.shopHeadImg5.length-1].status=false;
+												}
+											}
+											
+										}else{
+											uni.showToast({
+												title: data.msg,
+												icon: 'none'
+											});
+										}
+						                
+						            }
+						        });
+				    },
+					})
+						
+			},
+			open(type) {
+				this.img_type=type
+				this.$refs.popup.open();
+			},
+			close() {
+				//this.img_type=0;
+				this.$refs.popup.close();
 			},
 			push_skuData(){
 					this.sku.push({sku_name:'',sku_price:'',status:true})
@@ -146,7 +214,7 @@
 			},
 		 async	sub(type){
 				let that=this;
-				
+		
 			
 				if(!empty_b(that.nameType[0].id)||!empty_b(that.nameType[1].id)||!empty_b(that.nameType[2].id)){
 					return uni.showToast({
@@ -158,12 +226,37 @@
 						title: "请输入宝贝名称",
 						icon: 'none'
 					});
-				}else if(that.serviceArr.length<=0){
+				}
+				that.serviceArr="";
+			for (let i = 0; i < that.shopHeadImg.length; i++) {
+				if(!that.shopHeadImg[i].open){
+				
+					if(i==0){
+						that.shop_img=that.shopHeadImg[i].img
+					}
+					that.serviceArr+=that.shopHeadImg[i].img+","
+				}
+			}
+			that.serviceArr5=""
+			for (let i = 0; i < that.shopHeadImg5.length; i++) {
+				if(!that.shopHeadImg5[i].open){
+					console.warn(JSON.stringify(that.shopHeadImg5[i].img))
+					that.serviceArr5+=that.shopHeadImg5[i].img+","
+					console.warn(JSON.stringify(that.serviceArr5))
+				}
+			}
+			
+			 that.serviceArr= that.serviceArr.substr(0,that.serviceArr.length-1)
+			 that.serviceArr5= that.serviceArr5.substr(0,that.serviceArr5.length-1)	 
+			
+			
+				 if(!empty_b(that.serviceArr)){
 					return uni.showToast({
 						title: "请上传至少一张的商品主图",
 						icon: 'none'
 					});
 				}
+		
 				
 				
 				let count=0;
@@ -210,15 +303,15 @@
 					});
 				}
 				
-				if(that.serviceArr5.length<=0){
+				if(!empty_b(that.serviceArr5)){
 					return uni.showToast({
-						title: "商品详情图片至少上传一张",
+						title: "请上传至少一张的商品详情如",
 						icon: 'none'
 					});
 				}
 				let d={
 					shop_name :that.shop_name,
-					shop_img:[that.serviceArr[0]],
+					shop_img:that.shop_img,
 					img_urls   :that.serviceArr,
 					 sell_price  :that.sell_price,
 					 vip_price   :that.vip_price,
@@ -228,12 +321,11 @@
 					seconde_type_id  :that.nameType[1].id,
 					three_type_id   :that.nameType[2].id,
 					userid :uni.getStorageSync('dataInfo').id,
-					 detilas   :that.serviceArr5,
+					 detilas  :that.serviceArr5,
 					 is_send :type,
 					 sku :sku,
 				}
-				console.log("上传的数据：真多啊！：",d)
-				
+	
 				let data=await saveShopByUserid(d)
 				
 			if (data.status == 200) {
@@ -241,6 +333,11 @@
 					title: data.msg,
 					icon: 'none'
 				});
+				that.$api.prePage().selectGoods();
+				setTimeout(()=>{
+				
+					uni.navigateBack()
+				}, 800)
 			} else {
 				uni.showToast({
 					title: data.msg,
@@ -259,33 +356,11 @@
 			switchChange(e) {
 				
 				this.switch_check= e.value ? 1 :2;
-				// uni.showToast({
-				// 	title: 'change:' + e.value,
-				// 	icon: 'none',
-				// 	color:'#4CD964'
-				// })
+			
 			},
 			
-			async getInfo() {
-				// await uni.request({
-				// 	url: 'http://www.pbdpw.com/info.php',
-				// 	method: 'GET',
-				// 	data: {},
-				// 	success: res => {
-				// 		if (res.data.status == 'ok') {
-				// 			// this.serviceArr = res.data.data;
-				// 			console.log('服务器返回值：', JSON.stringify(res.data.data))
-				// 		}
-				// 	}
-				// });
-			},
-			getImageInfo4(e) {
-					this.serviceArr=e
-			},
-			getImageInfo5(e){
-				this.serviceArr5=e
-				
-			}
+		
+			
 		}
 	}
 </script>
@@ -309,9 +384,9 @@ page {
 		background-color: #fff;
 	}
 	.s-name{
-		padding-left: 15px;
-		.s-title{font-size: 28upx;padding: 20upx 0 6upx;}
-		.s-name{font-size: 28upx;}
+		
+		.s-title{font-size: 28upx;padding: 20upx 0 20upx;padding-left: 30upx;}
+		.s-name{font-size: 28upx;padding-left: 30upx;}
 	}
 	
 }
@@ -344,14 +419,15 @@ page {
 		width: 90%;
 		display: flex;
 		justify-content: space-between;
+		padding-top: 10upx;
 		.guige {
 			
 			.g-t {
-				font-size: 24upx;
+				font-size: 30upx;
 				color: #666;
 			}
 			.g-f {
-				font-size: 28upx;
+				font-size: 30upx;
 				color: #999;
 			}
 		}
@@ -367,7 +443,7 @@ page {
 	justify-content: space-between;
 	align-items: center;
 	.num-t {
-		font-size: 24upx;
+		font-size: 30upx;
 		 color: #666;
 	}
 	.num-f {
@@ -392,8 +468,10 @@ page {
 		width: 176upx;
 		height: 176upx;
 	}
-}
+} 
 .handle {
+	padding-top: 10upx;
+	    box-shadow: 0 0 6upx #dadada;
 	position: fixed;
 	background-color: #fff;
 	left: 0;
@@ -421,5 +499,51 @@ page {
 }
 .buts {
 	margin-bottom: 80upx;
+}
+
+.headImg{
+	width: 200upx;
+	    height: 200upx;
+	    padding: 20upx;
+}
+.popus {
+	.rest,
+	.see {
+		background-color: #fff;
+		padding: 0 30upx;
+		border: none;
+		font-size: 32upx;
+		color: #333;
+	}
+	.rest {
+		margin-top: 20upx;
+	}
+	.btn {
+		border: none;
+	}
+}
+.listimg{
+	   
+	display: flex;
+	    flex-wrap: wrap;
+		.imgsub{
+			width: 33%;    text-align: center;    position: relative;margin-top: 20upx;
+			.sunui-img-removeicon{
+				    position: absolute;
+					    color: #fff;
+					    width: 17px;
+					    height: 17px;
+					    line-height: 17px;
+					    z-index: 2;
+					    text-align: center;
+					    background-color: #e54d42;
+						    top: 0;
+						    right: 0;
+			}
+		}
+}
+
+.uni-list-item__content-title{
+	    padding: 9upx 0;
 }
 </style>

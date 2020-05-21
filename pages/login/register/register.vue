@@ -11,11 +11,11 @@
 			<input class="uni-input cell-tit" type="number" v-model="numberCode" placeholder="请输入验证码" />
 			<button class="mini-btn yticon btn" type="primary" @click='getCode()' size="mini">{{butCode}}</button>
 		</view>
-		<view class="list-cell b-b m-t" hover-class="cell-hover" :hover-stay-time="50">
+<!-- 		<view class="list-cell b-b m-t" hover-class="cell-hover" :hover-stay-time="50">
 			<image class="cell-more yticon iconS" src="../../../static/home/77.png"></image>
 			<input class="uni-input cell-tit" v-model="pid" type="text" placeholder="请输入验证码" />
-			<!-- <button class="mini-btn yticon btn" type="primary" size="mini">获取验证码</button> -->
-		</view>
+		
+		</view> -->
 		<view class="btns">
 			
 			<button class="b-t" @click="goregister()">注册</button>
@@ -27,17 +27,13 @@
 <script>
 import { isEmpty } from '../../../utils/Utils.js';
 import { sendSms, login, userReg } from '../../../api/index.js';
-import { timeCode_b } from '../../../public/base.js';
+import { timeCode_b,detPhone} from '../../../public/base.js';
 export default {
 	data() {
 		return {
-			address: {
-				province: '陕西省',
-				city: '西安市',
-				area: '雁塔区'
-			},
-			loadingType: '1',
-			phone: '15686408836',
+			
+			loadingType: '',
+			phone: '',
 			pid: '',
 			numberCode: '',
 			butCode:'获取验证码',
@@ -61,11 +57,18 @@ export default {
 		checkData(type) {
 			// 0 登陆；   1注册
 			let that = this;
+			
 			if (isEmpty(this.phone)) {
 				uni.showToast({
 					title: '请输入手机号',
 					icon: 'none'
 				});
+			}else if(!detPhone(this.phone)){
+				uni.showToast({
+					title: '您输入的手机号格式不正确',
+					icon: 'none'
+				});
+				
 			} else if (isEmpty(this.numberCode)) {
 				uni.showToast({
 					title: '请输入验证码',
@@ -223,9 +226,9 @@ page,
 	height: 35upx;
 }
 .btn {
-	width: 156upx;
+	// width: 156upx;
 	height: 54upx;
-	font-size: 10upx;
+	font-size: 12px;
 	color: #333333;
 	background-color: #ffe200;
 }

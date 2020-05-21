@@ -17,7 +17,8 @@
         },
         "modules" : {
             "Share" : {},
-            "Maps" : {}
+            "Maps" : {},
+            "Payment" : {}
         },
         /* 模块配置 */
         "distribute" : {
@@ -52,7 +53,13 @@
             "ios" : {},
             /* ios打包配置 */
             "sdkConfigs" : {
-                "ad" : {}
+                "ad" : {},
+                "payment" : {
+                    "weixin" : {
+                        "appid" : "",
+                        "UniversalLinks" : ""
+                    }
+                }
             },
             "icons" : {
                 "android" : {

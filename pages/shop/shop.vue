@@ -2,8 +2,8 @@
 	<view class="container b-t">
 	
 		<view class="shopInfo">
-			<image class="headImg" src="../../static/avatar.png"></image>
-			<text class="title">店铺名称</text>
+			<image class="headImg" :src="shopUser.storeImg"></image>
+			<text class="title">{{shopUser.storeName}}</text>
 		</view>
 		
 		<view class="shopType">
@@ -52,6 +52,7 @@
 <script>
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
 	import { selectShopListByUserid } from '../../api/goods.js';	
+	import {selectAppUserByUserid}  from '../../api/user.js'
 	export default {
 		components: { uniLoadMore },
 		data() {
@@ -64,18 +65,19 @@
 				isLoadMore: false,
 				loadMore:'more', //	load
 				dataList:[],
-				dataList1:[]
+				dataList1:[],
+				shopUser:{}
 			};
 		}, 
 		onLoad(opyion){
 			this.userId=opyion.id
-			this.shopInfo(true)
+			
+			Promise.all(this.shopInfo(true),this.shopHead())
+			//this.shopInfo(true)
 			
 		},
 		onReachBottom() {
-			// console.log("pageSize:",this.pageSize)
-			// console.log("pageRows:",this.pageRows)
-			// console.log("isLoadMore:",this.isLoadMore)
+		
 			
 			if (this.isLoadMore) {
 				this.pageSize = this.pageSize + 1;
@@ -83,6 +85,23 @@
 			}
 		},
 		methods:{
+			async shopHead(){
+				
+				let that=this;
+				let d={userid:that.userId,}
+				
+				let data=await selectAppUserByUserid(d)
+				
+				if(data.status==200){
+					that.shopUser=data.data;
+				}else{
+					uni.showToast({
+						title: data.msg,
+						icon: 'none'
+					});
+				}
+				
+			},
 			shopType(sta){
 				this.dataList=[];
 				this.dataList1=[];

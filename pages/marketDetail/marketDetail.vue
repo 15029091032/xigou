@@ -1,13 +1,13 @@
 <template>
 	<view class="container">
-		<image src="../../static/xys.png" class="c-img"></image>
+		<image :src="market.backImg" class="c-img"></image>
 		<view class="c-body">
 			<view class="c-title">
 				<view class="ctl">
 					<text class="c-name">{{market.name}}</text>
 					<image :src="market.sex=='女'?'../../static/nv.png':'../../static/nan.png'" class="sex"></image>
 				</view>
-				<image class="ctr" src="../../static/erweima.png" @click="togglePopup('center', 'image')"></image>
+				<image class="ctr" :src="market.wechatImg" @click="togglePopup('center', 'image')"></image>
 			</view>
 			<text class="userAge">{{market.age}}岁</text>
 			<view class="c-footer">
@@ -20,7 +20,7 @@
 		<!-- 插屏弹窗 -->
 		<uni-popup ref="showimage" :type="type" :mask-click="true" @change="change">
 			<view class="uni-image">
-				<image class="image" src="../../static/uni.png" mode="scaleToFill" />
+				<image class="image"  :src="market.wechatImg" mode="scaleToFill" />
 				<view class="uni-image-close" @click="cancel('image')">
 					<uni-icons type="clear" color="#fff" size="30" />
 				</view>
@@ -39,7 +39,8 @@
 			}
 		},
 		onLoad() {
-			this.gMarketDetai('1');
+			
+		 this.gMarketDetai('1');
 		},
 		methods: {
 			togglePopup(type, open) {

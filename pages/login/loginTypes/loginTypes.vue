@@ -21,20 +21,16 @@
 <script>
 import { isEmpty } from '../../../utils/Utils.js';
 import { sendSms, login, userReg } from '../../../api/index.js';
-import { timeCode_b } from '../../../public/base.js';
+import { timeCode_b,detPhone} from '../../../public/base.js';
 import {  
         mapMutations  
     } from 'vuex';
 export default {
 	data() {
 		return {
-			address: {
-				province: '陕西省',
-				city: '西安市',
-				area: '雁塔区'
-			},
-			loadingType: '1',
-			phone: '15029091032',
+		
+			loadingType: '',
+			phone: '',
 			numberCode: '',
 			butCode:'获取验证码'
 		};
@@ -55,13 +51,21 @@ export default {
 			this.phone = '';
 		},
 		checkData(type) {
+			
 			// 0 登陆；   1注册
 			let that = this;
+			
 			if (isEmpty(this.phone)) {
 				uni.showToast({
 					title: '请输入手机号',
 					icon: 'none'
 				});
+			}else if(!detPhone(this.phone)){
+				uni.showToast({
+					title: '您输入的手机号格式不正确',
+					icon: 'none'
+				});
+				
 			} else if (isEmpty(this.numberCode)) {
 				uni.showToast({
 					title: '请输入验证码',
@@ -128,26 +132,12 @@ export default {
 			 
 			 
 			if (data.status == 200) {
-			 //    uni.setStorageSync('dataInfo', data.data);
-				// uni.setStorageSync('loadingType', this.loadingType);
-				// uni.setStorage({
-				// 	key:'token',
-				// 	data: data.data.token,
-				// 	success() {
-						
-				// 	}
-				// })
-				// uni.getStorage({
-				// 	key: 'dataInfo',
-				// 	success: (res) => {
+		
 						
 						 this.login(data.data);
 						 uni.switchTab({
 						 	url: '../../index/index'
 						 });
-				// 	}
-				// });
-				
 				
 			} else {
 				uni.showToast({
@@ -231,9 +221,9 @@ page,
 	height: 35upx;
 }
 .btn {
-	width: 156upx;
+	// width: 156upx;
 	height: 54upx;
-	font-size: 10upx;
+	font-size: 12px;
 	color: #333333;
 	background-color: #ffe200;
 }
